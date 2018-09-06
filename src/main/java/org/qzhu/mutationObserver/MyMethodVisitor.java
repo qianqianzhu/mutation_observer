@@ -5,11 +5,14 @@ import org.qzhu.grammar.Java8Parser;
 import java.util.ArrayList;
 import java.util.LinkedList;
 
-
+/**
+ * @author Qianqian Zhu
+ */
 public class MyMethodVisitor extends Java8BaseListener {
     String packageName;
     String className;
     String currentMethodName;
+    int classNestCount;
     ArrayList<String> currentMethodSequence = new ArrayList<>();
     MethodCollector methodCollector = new MethodCollector();
     LinkedList<String> methodNameCollector = methodCollector.methodNameCollector;
@@ -25,17 +28,33 @@ public class MyMethodVisitor extends Java8BaseListener {
         if(packageName!=null){
             packageName += ".";
         }
+        classNestCount=0;
     }
 
     @Override
     public void enterNormalClassDeclaration(Java8Parser.NormalClassDeclarationContext ctx) {
-        className = ctx.Identifier().getText()+":";
+        classNestCount++;
+        //System.out.println(classNestCount);
+        if(classNestCount>1) {
+            className = className+"$"+ctx.Identifier().getText();
+        }else{
+            className = ctx.Identifier().getText();
+        }
+    }
+    @Override
+    public void exitNormalClassDeclaration(Java8Parser.NormalClassDeclarationContext ctx) {
+        classNestCount--;
+        if(classNestCount>0) {
+            int lastDollarIndex = className.lastIndexOf("$");
+            className = className.substring(0, lastDollarIndex);
+        }
+        //System.out.println(classNestCount);
     }
 
     @Override
     public void enterMethodDeclaration(Java8Parser.MethodDeclarationContext ctx) {
         String methodName = ctx.methodHeader().methodDeclarator().Identifier().getText();
-        currentMethodName = packageName+className+methodName;
+        currentMethodName = packageName+className+":"+methodName;
         //currentMethodSequence.clear();
         methodNameCollector.add(currentMethodName);
         //System.out.println(currentMethodName);
@@ -52,7 +71,7 @@ public class MyMethodVisitor extends Java8BaseListener {
     @Override
     public void enterConstructorDeclaration(Java8Parser.ConstructorDeclarationContext ctx) {
         String methodName = ctx.constructorDeclarator().simpleTypeName().getText();
-        currentMethodName = packageName+className+methodName;
+        currentMethodName = packageName+className+":"+methodName;
         methodNameCollector.add(currentMethodName);
         //System.out.println(currentMethodName);
     }

@@ -9,9 +9,7 @@ import org.antlr.v4.runtime.tree.ParseTreeWalker;
 import org.qzhu.grammar.Java8Lexer;
 import org.qzhu.grammar.Java8Parser;
 
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -20,6 +18,9 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
+/**
+ * @author Qianqian Zhu
+ */
 public class Utils {
 
     public static List<String> getAllJavaFilesFromDir(List<String> fileNames, String dir) {
@@ -66,7 +67,6 @@ public class Utils {
         }
     }
 
-
     public static int lcs(ArrayList<String> a, ArrayList<String> b){
         int aLen = a.size();
         int bLen = b.size();
@@ -87,34 +87,31 @@ public class Utils {
     }
 
 
-    public static int[][] generateLCSMatrix(LinkedList<ArrayList<String>> allMethodSequences){
+    public static int[][] generateLCSMatrix(LinkedList<String> allMethodNameCollector,
+                                            LinkedList<ArrayList<String>> allMethodSequences,
+                                            String fileName) throws IOException {
         int totalMethodNo = allMethodSequences.size();
-        //System.out.println(totalMethodNo);
         int LCSMatrix[][] = new int[totalMethodNo][totalMethodNo];
-        //int row = 0,col=0;
+        BufferedWriter writer = new BufferedWriter(new FileWriter(fileName));
+
         for(int row =0;row<totalMethodNo;row++){
+            writer.write(allMethodNameCollector.get(row)+",");
+
             for(int col=0;col<totalMethodNo;col++){
-                if(row!=col){
-                    LCSMatrix[row][col]=lcs(allMethodSequences.get(row),allMethodSequences.get(col));
-                } else{
-                    LCSMatrix[row][col]=0;
+                LCSMatrix[row][col]=lcs(allMethodSequences.get(row),allMethodSequences.get(col));
+
+                writer.write(Integer.toString(LCSMatrix[row][col]));
+                if(col!=totalMethodNo-1){
+                    writer.write(",");
                 }
-                //System.out.println("current row:"+row+" col:"+col+" "+allMethodSequences.get(row)+" "+allMethodSequences.get(col)+" lcs:"+LCSMatrix[row][col]);
             }
+            writer.write("\n");
+            writer.flush();
         }
-//        for(ArrayList<String> oneMethodSq: allMethodSequences){
-//            col=0;
-//            for(ArrayList<String> anotherMethodSq: allMethodSequences){
-//                //
-//                LCSMatrix[row][col] = lcs(oneMethodSq,anotherMethodSq);
-//                System.out.println("current row:"+row+" col:"+col+" "+oneMethodSq+" lcs:"+LCSMatrix[row][col]);
-//                col++;
-//            }
-//            row++;
-//
-//        }
+        writer.close();
 
         return LCSMatrix;
-
     }
+
+
 }
