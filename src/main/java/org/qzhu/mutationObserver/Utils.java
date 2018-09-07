@@ -95,14 +95,14 @@ public class Utils {
         BufferedWriter writer = new BufferedWriter(new FileWriter(fileName));
 
         for(int row =0;row<totalMethodNo;row++){
-            writer.write(allMethodNameCollector.get(row)+",");
+            writer.write(allMethodNameCollector.get(row)+";"+allMethodSequences.get(row).toString()+";");
 
             for(int col=0;col<totalMethodNo;col++){
                 LCSMatrix[row][col]=lcs(allMethodSequences.get(row),allMethodSequences.get(col));
 
                 writer.write(Integer.toString(LCSMatrix[row][col]));
                 if(col!=totalMethodNo-1){
-                    writer.write(",");
+                    writer.write(";");
                 }
             }
             writer.write("\n");
