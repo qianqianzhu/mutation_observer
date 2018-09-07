@@ -10,19 +10,18 @@ import org.junit.Test;
 import org.qzhu.grammar.Java8Lexer;
 import org.qzhu.grammar.Java8Parser;
 
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.LinkedList;
 
 import static org.junit.Assert.*;
 
 public class MyMethodVisitorTest {
 
-    @Test
-    public void testNestClassCase(){
+    private MethodCollector methodWalker(String filename){
         try {
-            InputStream inputStream = MyMethodVisitorTest.class.getResourceAsStream("/TypeUtils.java");
+            InputStream inputStream = MyMethodVisitorTest.class.getResourceAsStream(filename);
             Lexer lexer = new Java8Lexer(CharStreams.fromStream(inputStream));
             TokenStream tokenStream = new CommonTokenStream(lexer);
             Java8Parser parser = new Java8Parser(tokenStream);
@@ -31,14 +30,27 @@ public class MyMethodVisitorTest {
             MyMethodVisitor methodVisitor = new MyMethodVisitor();
             walker.walk(methodVisitor,tree);
             MethodCollector methodCollector = methodVisitor.getMethodCollector();
-            LinkedList<String> methodNameCollector = new LinkedList<String>(methodCollector.methodNameCollector);
-            //System.out.println(methodNameCollector.toString());
-            assertTrue(methodNameCollector.contains("org.apache.commons.lang3.reflect.TypeUtils$WildcardTypeBuilder:WildcardTypeBuilder"));
-            assertTrue(methodNameCollector.contains("org.apache.commons.lang3.reflect.TypeUtils$GenericArrayTypeImpl:getGenericComponentType"));
-
+            return methodCollector;
         } catch (IOException e) {
             e.printStackTrace();
+            return null;
         }
+    }
+
+    @Test
+    public void testNestClassCase() {
+        MethodCollector methodCollector = methodWalker("/TypeUtils.java");
+        LinkedList<String> methodNameCollector = new LinkedList<>(methodCollector.methodNameCollector);
+        assertTrue(methodNameCollector.contains("org.apache.commons.lang3.reflect.TypeUtils$WildcardTypeBuilder:WildcardTypeBuilder"));
+        assertTrue(methodNameCollector.contains("org.apache.commons.lang3.reflect.TypeUtils$GenericArrayTypeImpl:getGenericComponentType"));
+    }
+
+    @Test
+    public void testLongMethodCase(){
+        MethodCollector methodCollector = methodWalker("/LocaleUtils.java");
+        LinkedList<ArrayList<String>> methodSequenceCollector = new LinkedList<ArrayList<String>>(methodCollector.methodSequenceCollector);
+        assertTrue(methodSequenceCollector.get(1).toString()
+                .equals("[if, {, }, if, {, }, if, {, }, if, {, }, if, {, if, {, }, if, {, }, if, {, }, if, {, }, if, {, }, }]"));
     }
 
 }
