@@ -5,6 +5,7 @@ import org.junit.Test;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
 
 import static org.junit.Assert.*;
@@ -53,6 +54,41 @@ public class UtilsTest {
         b.addAll(Arrays.asList(sq2));
 
         assertEquals(Utils.lcs(a,b),3);
+
+    }
+
+
+    @Test
+    public void testParsePitestFile() throws IOException {
+        String testDir ="./src/main/resources/";
+        String pitestFileName = "/Users/qianqianzhu/phd/testability/Observer/pitest_result/commons-lang-LANG_3_7_mutations.csv";
+
+        List<String> fileNames = new ArrayList<>();
+        fileNames = Utils.getAllJavaFilesFromDir(fileNames,testDir);
+        LinkedList<MethodInfo> allMethodInfo = new LinkedList<>();
+        for(String fileName: fileNames){
+            System.out.println("Processing "+fileName);
+            LinkedList<MethodInfo> methodInfo = Utils.getAllMethodInfoFromFile(fileName);
+            //System.out.println(methodCollector.methodNameCollector);
+            //System.out.println(methodCollector.methodSequenceCollector);
+            allMethodInfo.addAll(methodInfo);
+        }
+
+        System.out.println("generating LCS matrix...");
+        int totalMethod = allMethodInfo.size();
+        System.out.println("Total method no.: "+totalMethod);
+        String fileName = "./src/main/results/commons-lang-LANG_3_7_lcs.csv";
+        System.out.println("Parsing Pitest results...");
+
+        Utils.parsePitestFile(pitestFileName,allMethodInfo);
+        for (MethodInfo method:allMethodInfo){
+            System.out.println(method.method_name+":"+method.kill_mut+" "+method.total_mut);
+        }
+
+        assertEquals(allMethodInfo.get(0).total_mut,0);
+        assertEquals(allMethodInfo.get(0).kill_mut,0);
+        assertEquals(allMethodInfo.get(1).total_mut,1);
+        assertEquals(allMethodInfo.get(1).kill_mut,1);
 
     }
 }

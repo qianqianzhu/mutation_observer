@@ -39,6 +39,7 @@ public class MyMethodVisitor extends Java8BaseListener {
             className = className+"$"+ctx.Identifier().getText();
         }else{
             className = ctx.Identifier().getText();
+
         }
     }
     @Override
@@ -58,6 +59,7 @@ public class MyMethodVisitor extends Java8BaseListener {
         //currentMethodSequence.clear();
         methodNameCollector.add(currentMethodName);
         //System.out.println(currentMethodName);
+        System.out.println(methodName+" line no.:"+ctx.start.getLine()+"~"+ctx.stop.getLine());
     }
     @Override
     public void exitMethodDeclaration(Java8Parser.MethodDeclarationContext ctx) {
@@ -74,6 +76,7 @@ public class MyMethodVisitor extends Java8BaseListener {
         currentMethodName = packageName+className+":"+methodName;
         methodNameCollector.add(currentMethodName);
         //System.out.println(currentMethodName);
+        System.out.println(methodName+" line no.:"+ctx.start.getLine()+"~"+ctx.stop.getLine());
     }
 
     @Override

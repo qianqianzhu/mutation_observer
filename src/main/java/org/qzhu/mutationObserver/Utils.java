@@ -15,6 +15,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -40,7 +41,8 @@ public class Utils {
         return fileNames;
     }
 
-    public static MethodCollector getAllMethodSequenceFromFile(String fileName){
+
+    public static LinkedList<MethodInfo> getAllMethodInfoFromFile(String fileName){
         try {
             // get the input file as an InputStream
             InputStream inputStream = new FileInputStream(fileName);
@@ -55,12 +57,12 @@ public class Utils {
             // create standard walker
             ParseTreeWalker walker = new ParseTreeWalker();
             // add self-implemented listener
-            MyMethodVisitor methodVisitor = new MyMethodVisitor();
+            MethodInfoVisitor methodVisitor = new MethodInfoVisitor();
             // walk the ast with self-implemented listener
             walker.walk(methodVisitor,tree);
             //System.out.println(tree.toStringTree(parser)); // print tree as text
             //System.out.println(LCSMatrix);
-            return methodVisitor.getMethodCollector();
+            return methodVisitor.getAllMethodInfoCollector();
         } catch (IOException e) {
             e.printStackTrace();
             return null;
@@ -87,18 +89,23 @@ public class Utils {
     }
 
 
-    public static int[][] generateLCSMatrix(LinkedList<String> allMethodNameCollector,
-                                            LinkedList<ArrayList<String>> allMethodSequences,
+    public static int[][] generateLCSMatrix(LinkedList<MethodInfo> allMethodInfo,
                                             String fileName) throws IOException {
-        int totalMethodNo = allMethodSequences.size();
+        int totalMethodNo = allMethodInfo.size();
         int LCSMatrix[][] = new int[totalMethodNo][totalMethodNo];
         BufferedWriter writer = new BufferedWriter(new FileWriter(fileName));
 
         for(int row =0;row<totalMethodNo;row++){
-            writer.write(allMethodNameCollector.get(row)+";"+allMethodSequences.get(row).toString()+";");
+            MethodInfo thisMethod = allMethodInfo.get(row);
+            writer.write(thisMethod.method_name+";"
+                    +thisMethod.start_line+";"
+                    +thisMethod.stop_line+";"
+                    +thisMethod.kill_mut+";"
+                    +thisMethod.total_mut+";"
+                    +thisMethod.method_sequence.toString()+";");
 
             for(int col=0;col<totalMethodNo;col++){
-                LCSMatrix[row][col]=lcs(allMethodSequences.get(row),allMethodSequences.get(col));
+                LCSMatrix[row][col]=lcs(thisMethod.method_sequence,allMethodInfo.get(col).method_sequence);
 
                 writer.write(Integer.toString(LCSMatrix[row][col]));
                 if(col!=totalMethodNo-1){
@@ -111,6 +118,58 @@ public class Utils {
         writer.close();
 
         return LCSMatrix;
+    }
+
+    public static void parsePitestFile(String pitest_filename,LinkedList<MethodInfo> allMethodInfo) throws IOException {
+        // create methods map for mutation score: key-className(without nested class)
+        HashMap<String,ArrayList<MethodInfo>> allMethodMap = new HashMap<>();
+        for(MethodInfo method: allMethodInfo){
+            String methodName = method.method_name;
+            String[] nameInfos = methodName.split(":");
+            String className =nameInfos[0];
+            String key = className;
+            if(className.indexOf("$")!=-1){
+                key = className.substring(0,className.indexOf("$"));
+            }
+            ArrayList<MethodInfo> methodInfos;
+            if(!allMethodMap.containsKey(key)){
+                methodInfos = new ArrayList<>();
+            }else{
+                methodInfos = allMethodMap.get(key);
+            }
+            methodInfos.add(method);
+            allMethodMap.put(key,methodInfos);
+        }
+
+        // read pit results from file
+        BufferedReader pitest_reader = new BufferedReader(new FileReader(pitest_filename));
+        String line;
+        while ((line = pitest_reader.readLine()) != null) {
+            String columns[] = line.split(",");
+            if (columns.length==0)
+                continue;
+            String className = columns[1].trim();
+            String classNameWithoutNest=className;
+            if(className.indexOf("$")!=-1) {
+                classNameWithoutNest = className.substring(0, className.indexOf("$"));
+            }
+            //System.out.println(classNameWithoutNest);
+            int lineNo = Integer.parseInt(columns[4].trim());
+            // iterate method map
+            if(allMethodMap.containsKey(classNameWithoutNest)){
+                // match method name
+                ArrayList<MethodInfo> methodInfos = allMethodMap.get(classNameWithoutNest);
+                for(MethodInfo method: methodInfos){
+                    // match method location
+                    if(lineNo>=method.start_line && lineNo <= method.stop_line){
+                        method.total_mut = method.total_mut+1;
+                        if(!(columns[5].trim().equals("SURVIVED") || columns[5].trim().equals("NO_COVERAGE"))){
+                            method.kill_mut = method.kill_mut+1;
+                        }
+                    }
+                }
+            }
+        }
     }
 
 
