@@ -1,9 +1,0 @@
-org.qzhu.example.HelloWorld:HelloWorld;6;10;[if, {, }];3;3;2;3;0;0;0;0;0
-org.qzhu.example.HelloWorld:main;12;24;[for, {, if, {, if, {, }, else, {, if, {, }, else, {, }, }, }, }];3;18;2;8;0;0;0;0;0
-org.qzhu.example.HelloWorld:doStatementExample;26;32;[do, {, }];2;2;3;2;0;0;0;0;0
-org.qzhu.example.HelloWorld:indexOf;34;48;[for, {, while, {, if, {, }, }, }];3;8;2;9;0;0;0;0;0
-org.apache.commons.lang3.ClassPathUtils:ClassPathUtils;37;39;[];0;0;0;0;0;0;0;0;0
-org.apache.commons.lang3.ClassPathUtils:toFullyQualifiedName;57;61;[];0;0;0;0;0;0;0;0;0
-org.apache.commons.lang3.ClassPathUtils:toFullyQualifiedName;79;83;[];0;0;0;0;0;0;0;0;0
-org.apache.commons.lang3.ClassPathUtils:toFullyQualifiedPath;101;105;[];0;0;0;0;0;0;0;0;0
-org.apache.commons.lang3.ClassPathUtils:toFullyQualifiedPath;124;128;[];0;0;0;0;0;0;0;0;0

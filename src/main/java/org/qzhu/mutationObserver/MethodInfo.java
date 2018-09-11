@@ -9,6 +9,8 @@ public class MethodInfo {
     public ArrayList<String> method_sequence;
     public int total_mut;
     public int kill_mut;
+    public ArrayList<String> methodModifier;
+    public boolean isVoid;
 
     public MethodInfo(int start_line, int stop_line, String method_name) {
         this.start_line = start_line;
@@ -17,14 +19,7 @@ public class MethodInfo {
         this.total_mut = 0;
         this.kill_mut = 0;
     }
-
-    public MethodInfo(int start_line, int stop_line, String method_name, ArrayList<String> method_sequence) {
-        this.start_line = start_line;
-        this.stop_line = stop_line;
-        this.method_name = method_name;
-        this.method_sequence = method_sequence;
-
-    }
+    
 
     public void setMethod_sequence(ArrayList<String> method_sequence) {
         this.method_sequence = method_sequence;

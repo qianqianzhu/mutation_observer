@@ -1,9 +1,0 @@
-org.qzhu.example.HelloWorld:HelloWorld,0,3,2,3,0,0,0,0,0
-org.qzhu.example.HelloWorld:main,3,0,2,8,0,0,0,0,0
-org.qzhu.example.HelloWorld:doStatementExample,2,2,0,2,0,0,0,0,0
-org.qzhu.example.HelloWorld:indexOf,3,8,2,0,0,0,0,0,0
-org.apache.commons.lang3.ClassPathUtils:ClassPathUtils,0,0,0,0,0,0,0,0,0
-org.apache.commons.lang3.ClassPathUtils:toFullyQualifiedName,0,0,0,0,0,0,0,0,0
-org.apache.commons.lang3.ClassPathUtils:toFullyQualifiedName,0,0,0,0,0,0,0,0,0
-org.apache.commons.lang3.ClassPathUtils:toFullyQualifiedPath,0,0,0,0,0,0,0,0,0
-org.apache.commons.lang3.ClassPathUtils:toFullyQualifiedPath,0,0,0,0,0,0,0,0,0

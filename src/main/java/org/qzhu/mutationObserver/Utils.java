@@ -146,14 +146,15 @@ public class Utils {
         String line;
         while ((line = pitest_reader.readLine()) != null) {
             String columns[] = line.split(",");
-            if (columns.length==0)
+            if (columns.length < 6)
                 continue;
-            String className = columns[1].trim();
+            String className = columns[1];
             String classNameWithoutNest=className;
             if(className.indexOf("$")!=-1) {
                 classNameWithoutNest = className.substring(0, className.indexOf("$"));
             }
             //System.out.println(classNameWithoutNest);
+            System.out.println(line);
             int lineNo = Integer.parseInt(columns[4].trim());
             // iterate method map
             if(allMethodMap.containsKey(classNameWithoutNest)){
@@ -163,7 +164,7 @@ public class Utils {
                     // match method location
                     if(lineNo>=method.start_line && lineNo <= method.stop_line){
                         method.total_mut = method.total_mut+1;
-                        if(!(columns[5].trim().equals("SURVIVED") || columns[5].trim().equals("NO_COVERAGE"))){
+                        if(!(columns[5].equals("SURVIVED") || columns[5].equals("NO_COVERAGE"))){
                             method.kill_mut = method.kill_mut+1;
                         }
                     }

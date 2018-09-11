@@ -77,7 +77,6 @@ public class UtilsTest {
         System.out.println("generating LCS matrix...");
         int totalMethod = allMethodInfo.size();
         System.out.println("Total method no.: "+totalMethod);
-        String fileName = "./src/main/results/commons-lang-LANG_3_7_lcs.csv";
         System.out.println("Parsing Pitest results...");
 
         Utils.parsePitestFile(pitestFileName,allMethodInfo);
@@ -91,4 +90,5 @@ public class UtilsTest {
         assertEquals(allMethodInfo.get(1).kill_mut,1);
 
     }
+
 }

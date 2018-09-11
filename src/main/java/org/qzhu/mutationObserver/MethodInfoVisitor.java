@@ -2,9 +2,12 @@ package org.qzhu.mutationObserver;
 
 import org.qzhu.grammar.Java8BaseListener;
 import org.qzhu.grammar.Java8Parser;
+import org.qzhu.grammar.Java8Parser.MethodModifierContext;
+
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
+import java.util.List;
 
 /**
  * @author Qianqian Zhu
@@ -54,14 +57,25 @@ public class MethodInfoVisitor extends Java8BaseListener {
 
     @Override
     public void enterMethodDeclaration(Java8Parser.MethodDeclarationContext ctx) {
+        boolean isVoid = false;
+        String methodResultType = ctx.methodHeader().result().getText();
+        if(methodResultType.equals("void")){
+            isVoid = true;
+        }
+        ArrayList<String> methodModifier = new ArrayList<>();
+        List<MethodModifierContext> modifierContext = ctx.methodModifier();
+        for(MethodModifierContext mmc: modifierContext){
+            methodModifier.add(mmc.getText());
+        }
         String methodName = ctx.methodHeader().methodDeclarator().Identifier().getText();
         currentMethodName = packageName+className+":"+methodName;
         //currentMethodSequence.clear();
         //System.out.println(currentMethodName);
         //System.out.println(methodName+" line no.:"+ctx.start.getLine()+"~"+ctx.stop.getLine());
-        methodInfoCollector.push(
-                new MethodInfo(ctx.start.getLine(),
-                        ctx.stop.getLine(),currentMethodName));
+        MethodInfo currenctMethod = new MethodInfo(ctx.start.getLine(), ctx.stop.getLine(),currentMethodName);
+        currenctMethod.isVoid = isVoid;
+        currenctMethod.methodModifier = methodModifier;
+        methodInfoCollector.push(currenctMethod);
     }
     @Override
     public void exitMethodDeclaration(Java8Parser.MethodDeclarationContext ctx) {
@@ -80,9 +94,15 @@ public class MethodInfoVisitor extends Java8BaseListener {
         currentMethodName = packageName+className+":<init>";
         //System.out.println(currentMethodName);
         //System.out.println(methodName+" line no.:"+ctx.start.getLine()+"~"+ctx.stop.getLine());
-        methodInfoCollector.push(
-                new MethodInfo(ctx.start.getLine(),
-                        ctx.stop.getLine(),currentMethodName));
+        MethodInfo currenctMethod = new MethodInfo(ctx.start.getLine(), ctx.stop.getLine(),currentMethodName);
+        currenctMethod.isVoid = true;
+        ArrayList<String> methodModifier = new ArrayList<>();
+        List<Java8Parser.ConstructorModifierContext> modifierContext = ctx.constructorModifier();
+        for(Java8Parser.ConstructorModifierContext mmc: modifierContext){
+            methodModifier.add(mmc.getText());
+        }
+        currenctMethod.methodModifier = methodModifier;
+        methodInfoCollector.push(currenctMethod);
     }
 
     @Override

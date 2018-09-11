@@ -40,13 +40,18 @@ public class MethodInfoVisitorTest {
     public void testNestClassCase() {
         LinkedList<MethodInfo> allMethodInfo = methodWalker("/TypeUtils.java");
 
+//        for(MethodInfo method:allMethodInfo){
+//            System.out.println(method.method_name+":"+method.isVoid+" "+method.methodModifier.toString());
+//        }
         MethodInfo testMethod0 = allMethodInfo.get(0);
         assertEquals(testMethod0.start_line,57);
         assertEquals(testMethod0.stop_line,58);
-        assertTrue(testMethod0.method_name.equals("org.apache.commons.lang3.reflect.TypeUtils$WildcardTypeBuilder:WildcardTypeBuilder"));
+        assertTrue(testMethod0.isVoid);
+        assertTrue(testMethod0.methodModifier.contains("private"));
+        assertTrue(testMethod0.method_name.equals("org.apache.commons.lang3.reflect.TypeUtils$WildcardTypeBuilder:<init>"));
 
         MethodInfo testMethod4 = allMethodInfo.get(4);
-        assertTrue(testMethod4.method_name.equals("org.apache.commons.lang3.reflect.TypeUtils$GenericArrayTypeImpl:GenericArrayTypeImpl"));
+        assertTrue(testMethod4.method_name.equals("org.apache.commons.lang3.reflect.TypeUtils$GenericArrayTypeImpl:<init>"));
     }
 
 
