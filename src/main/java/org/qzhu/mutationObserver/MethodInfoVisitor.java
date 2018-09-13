@@ -5,7 +5,6 @@ import org.qzhu.grammar.Java8Parser;
 import org.qzhu.grammar.Java8Parser.MethodModifierContext;
 
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -18,6 +17,7 @@ public class MethodInfoVisitor extends Java8BaseListener {
     String currentMethodName;
     int classNestCount;
     ArrayList<String> currentMethodSequence = new ArrayList<>();
+    Node<String> currentMethodTreeNode = new Node<>("root");
 
 
     LinkedList<MethodInfo> methodInfoCollector = new LinkedList<>();
@@ -72,19 +72,22 @@ public class MethodInfoVisitor extends Java8BaseListener {
         //currentMethodSequence.clear();
         //System.out.println(currentMethodName);
         //System.out.println(methodName+" line no.:"+ctx.start.getLine()+"~"+ctx.stop.getLine());
-        MethodInfo currenctMethod = new MethodInfo(ctx.start.getLine(), ctx.stop.getLine(),currentMethodName);
-        currenctMethod.isVoid = isVoid;
-        currenctMethod.methodModifier = methodModifier;
-        methodInfoCollector.push(currenctMethod);
+        MethodInfo currentMethod = new MethodInfo(ctx.start.getLine(), ctx.stop.getLine(),currentMethodName);
+        currentMethod.isVoid = isVoid;
+        currentMethod.methodModifier = methodModifier;
+        methodInfoCollector.push(currentMethod);
     }
     @Override
     public void exitMethodDeclaration(Java8Parser.MethodDeclarationContext ctx) {
         //System.out.println();
-        //System.out.println(currentMethodSequence.toString());
+        //String treeString="";
+        //System.out.println(currentMethodTreeNode.getRoot().toString(treeString));
         MethodInfo currentMethod = methodInfoCollector.pop();
         currentMethod.setMethod_sequence(new ArrayList<>(currentMethodSequence));
+        currentMethod.methodTreeRoot = new Node<>(currentMethodTreeNode.getRoot());
         allMethodInfoCollector.add(currentMethod);
         currentMethodSequence.clear();
+        currentMethodTreeNode = new Node<>("root");
 
     }
 
@@ -94,24 +97,28 @@ public class MethodInfoVisitor extends Java8BaseListener {
         currentMethodName = packageName+className+":<init>";
         //System.out.println(currentMethodName);
         //System.out.println(methodName+" line no.:"+ctx.start.getLine()+"~"+ctx.stop.getLine());
-        MethodInfo currenctMethod = new MethodInfo(ctx.start.getLine(), ctx.stop.getLine(),currentMethodName);
-        currenctMethod.isVoid = true;
+        MethodInfo currentMethod = new MethodInfo(ctx.start.getLine(), ctx.stop.getLine(),currentMethodName);
+        currentMethod.isVoid = true;
         ArrayList<String> methodModifier = new ArrayList<>();
         List<Java8Parser.ConstructorModifierContext> modifierContext = ctx.constructorModifier();
         for(Java8Parser.ConstructorModifierContext mmc: modifierContext){
             methodModifier.add(mmc.getText());
         }
-        currenctMethod.methodModifier = methodModifier;
-        methodInfoCollector.push(currenctMethod);
+        currentMethod.methodModifier = methodModifier;
+        methodInfoCollector.push(currentMethod);
     }
 
     @Override
     public void exitConstructorDeclaration(Java8Parser.ConstructorDeclarationContext ctx) {
         //System.out.println(currentMethodSequence.toString());
+        //String treeString="";
+        //System.out.println(currentMethodTreeNode.getRoot().toString(treeString));
         MethodInfo currentMethod = methodInfoCollector.pop();
         currentMethod.setMethod_sequence(new ArrayList<>(currentMethodSequence));
+        currentMethod.methodTreeRoot = new Node<>(currentMethodTreeNode.getRoot());
         allMethodInfoCollector.add(currentMethod);
         currentMethodSequence.clear();
+        currentMethodTreeNode = new Node<>("root");
     }
 
     @Override
@@ -119,26 +126,33 @@ public class MethodInfoVisitor extends Java8BaseListener {
         //System.out.print("if{");
         currentMethodSequence.add("if");
         currentMethodSequence.add("{");
+        currentMethodTreeNode = currentMethodTreeNode.addChild(new Node<>("if"));
+
     }
     @Override
     public void exitIfThenStatement(Java8Parser.IfThenStatementContext ctx) {
         //System.out.print("}");
         currentMethodSequence.add("}");
+        currentMethodTreeNode = currentMethodTreeNode.getParent();
     }
 
     @Override
     public void enterIfThenElseStatement(Java8Parser.IfThenElseStatementContext ctx) {
         //System.out.print("if{}else{");
-        currentMethodSequence.add("if");
+//        currentMethodSequence.add("if");
+//        currentMethodSequence.add("{");
+//        currentMethodSequence.add("}");
+//        currentMethodSequence.add("else");
+//        currentMethodSequence.add("{");
+        currentMethodSequence.add("if-else");
         currentMethodSequence.add("{");
-        currentMethodSequence.add("}");
-        currentMethodSequence.add("else");
-        currentMethodSequence.add("{");
+        currentMethodTreeNode = currentMethodTreeNode.addChild(new Node<>("if-else"));
     }
     @Override
     public void exitIfThenElseStatement(Java8Parser.IfThenElseStatementContext ctx) {
         //System.out.print("}");
         currentMethodSequence.add("}");
+        currentMethodTreeNode = currentMethodTreeNode.getParent();
     }
 
     @Override
@@ -146,12 +160,14 @@ public class MethodInfoVisitor extends Java8BaseListener {
         //System.out.print("while{");
         currentMethodSequence.add("while");
         currentMethodSequence.add("{");
+        currentMethodTreeNode = currentMethodTreeNode.addChild(new Node<>("while"));
     }
 
     @Override
     public void exitWhileStatement(Java8Parser.WhileStatementContext ctx) {
         //System.out.print("}");
         currentMethodSequence.add("}");
+        currentMethodTreeNode = currentMethodTreeNode.getParent();
     }
 
     @Override
@@ -159,12 +175,14 @@ public class MethodInfoVisitor extends Java8BaseListener {
         //System.out.print("for{");
         currentMethodSequence.add("for");
         currentMethodSequence.add("{");
+        currentMethodTreeNode = currentMethodTreeNode.addChild(new Node<>("for"));
     }
 
     @Override
     public void exitForStatement(Java8Parser.ForStatementContext ctx) {
         //System.out.print("}");
         currentMethodSequence.add("}");
+        currentMethodTreeNode = currentMethodTreeNode.getParent();
     }
 
     @Override
@@ -172,11 +190,13 @@ public class MethodInfoVisitor extends Java8BaseListener {
         //System.out.print("do{");
         currentMethodSequence.add("do");
         currentMethodSequence.add("{");
+        currentMethodTreeNode = currentMethodTreeNode.addChild(new Node<>("do"));
     }
     @Override
     public void exitDoStatement(Java8Parser.DoStatementContext ctx) {
         //System.out.print("}");
         currentMethodSequence.add("}");
+        currentMethodTreeNode = currentMethodTreeNode.getParent();
     }
 
 }

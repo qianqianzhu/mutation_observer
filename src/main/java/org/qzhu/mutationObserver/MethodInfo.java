@@ -11,6 +11,7 @@ public class MethodInfo {
     public int kill_mut;
     public ArrayList<String> methodModifier;
     public boolean isVoid;
+    public Node<String> methodTreeRoot;
 
     public MethodInfo(int start_line, int stop_line, String method_name) {
         this.start_line = start_line;

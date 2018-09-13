@@ -67,4 +67,20 @@ public class MethodInfoVisitorTest {
                 .equals("[if, {, }, if, {, }, if, {, }, if, {, }, if, {, if, {, }, if, {, }, if, {, }, if, {, }, if, {, }, }]"));
     }
 
+    @Test
+    public void testIfElseStatement() {
+        LinkedList<MethodInfo> allMethodInfo = methodWalker("/helloworld.java");
+
+        MethodInfo testMethod1 = allMethodInfo.get(1);
+        String treeString = "";
+        treeString = testMethod1.methodTreeRoot.toString(treeString);
+        assertEquals(treeString,"(root(for(if(if-else(if)(if-else(if)(if))))))");
+
+//        for(MethodInfo method:allMethodInfo){
+//            String treeString = "";
+//            treeString = method.methodTreeRoot.toString(treeString);
+//            System.out.println(method.method_name+":"+treeString);
+//        }
+
+    }
 }

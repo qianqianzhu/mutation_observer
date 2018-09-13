@@ -98,8 +98,9 @@ public class Utils {
         for(int row =0;row<totalMethodNo;row++){
             MethodInfo thisMethod = allMethodInfo.get(row);
             writer.write(thisMethod.method_name+";"
-                    +thisMethod.start_line+";"
-                    +thisMethod.stop_line+";"
+                    +thisMethod.methodModifier.contains("public")+";"
+                    +thisMethod.isVoid+";"
+                    +(thisMethod.stop_line-thisMethod.start_line+1)+";"
                     +thisMethod.kill_mut+";"
                     +thisMethod.total_mut+";"
                     +thisMethod.method_sequence.toString()+";");
@@ -154,7 +155,6 @@ public class Utils {
                 classNameWithoutNest = className.substring(0, className.indexOf("$"));
             }
             //System.out.println(classNameWithoutNest);
-            System.out.println(line);
             int lineNo = Integer.parseInt(columns[4].trim());
             // iterate method map
             if(allMethodMap.containsKey(classNameWithoutNest)){
