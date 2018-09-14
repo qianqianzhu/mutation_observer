@@ -62,12 +62,60 @@ public class Node<T> implements Cloneable{
         return treeString;
     }
 
+    public int maxDepth(){
+        if(this==null)
+            return 0;
+
+        int bigger = 0;
+        for(Node child: children){
+            int childDepth = child.maxDepth();
+            bigger = Math.max(bigger,childDepth);
+        }
+        return bigger+1;
+    }
+
+    public Node<T> deleteRootNode() {
+        if (parent != null) {
+            throw new IllegalStateException("deleteRootNode not called on root");
+        }
+        Node<T> newParent = null;
+        if (!getChildren().isEmpty()) {
+            newParent = getChildren().get(0);
+            newParent.setParent(null);
+            getChildren().remove(0);
+            for (Node<T> each : getChildren()) {
+                each.setParent(newParent);
+            }
+            newParent.getChildren().addAll(getChildren());
+        }
+        this.getChildren().clear();
+        return newParent;
+    }
+
     public int compareTo(Node<T> node){
+        System.out.println(this.data);
+        if(this==null)
+            return 0;
+
+//        if(this.maxDepth()<node.maxDepth())
+//            return 0;
+
         int count = 0;
-        if(node.getData().equals(this.data)){
-            
+        if(data.equals(node.getData())){
+            for(Node child:children){
+                if(child.getData().equals(node.getChildren().get(0).getData())){
+                    count++;
+                }
+                List<Node> subChildren = child.getChildren();
+                for (Node subChild:subChildren){
+                    count = count+ subChild.compareTo(node.getChildren().get(0));
+                }
+            }
         }
 
+//        for(Node child:children){
+//            count = count + child.compareTo(node);
+//        }
         return count;
     }
 }

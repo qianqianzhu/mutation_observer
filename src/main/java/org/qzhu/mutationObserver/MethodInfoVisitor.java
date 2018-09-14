@@ -84,7 +84,7 @@ public class MethodInfoVisitor extends Java8BaseListener {
         //System.out.println(currentMethodTreeNode.getRoot().toString(treeString));
         MethodInfo currentMethod = methodInfoCollector.pop();
         currentMethod.setMethod_sequence(new ArrayList<>(currentMethodSequence));
-        currentMethod.methodTreeRoot = new Node<>(currentMethodTreeNode.getRoot());
+        currentMethod.methodTreeRoot = new Node<>(currentMethodTreeNode.getRoot().deleteRootNode());
         allMethodInfoCollector.add(currentMethod);
         currentMethodSequence.clear();
         currentMethodTreeNode = new Node<>("root");
@@ -115,7 +115,7 @@ public class MethodInfoVisitor extends Java8BaseListener {
         //System.out.println(currentMethodTreeNode.getRoot().toString(treeString));
         MethodInfo currentMethod = methodInfoCollector.pop();
         currentMethod.setMethod_sequence(new ArrayList<>(currentMethodSequence));
-        currentMethod.methodTreeRoot = new Node<>(currentMethodTreeNode.getRoot());
+        currentMethod.methodTreeRoot = new Node<>(currentMethodTreeNode.getRoot().deleteRootNode());
         allMethodInfoCollector.add(currentMethod);
         currentMethodSequence.clear();
         currentMethodTreeNode = new Node<>("root");
