@@ -15,12 +15,11 @@ class Main {
 //       String testDir ="./src/main/resources/";
        String testDir = "/Users/qianqianzhu/phd/testability/commons-lang-LANG_3_7/src/main/java/";
        List<String> fileNames = new ArrayList<>();
-       fileNames = Utils.getAllJavaFilesFromDir(fileNames,testDir);
+//       fileNames = Utils.getAllJavaFilesFromDir(fileNames,testDir);
 
        String testDir2 = "/Users/qianqianzhu/phd/testability/commons-math-MATH_3_6_1_pitest/src/main/java/";
        List<String> fileNames2 = new ArrayList<>();
        fileNames2 = Utils.getAllJavaFilesFromDir(fileNames2,testDir2);
-
        fileNames.addAll(fileNames2);
 
        LinkedList<MethodInfo> allMethodInfo = new LinkedList<>();
@@ -36,13 +35,13 @@ class Main {
        System.out.println("Total method no.: "+totalMethod);
 
        System.out.println("Parsing Pitest results...");
-       String pitestFileName = "/Users/qianqianzhu/phd/testability/Observer/pitest_result/commons-lang-LANG_3_7_mutations.csv";
-       Utils.parsePitestFile(pitestFileName,allMethodInfo);
+//       String pitestFileName = "/Users/qianqianzhu/phd/testability/Observer/pitest_result/commons-lang-LANG_3_7_mutations.csv";
+//       Utils.parsePitestFile(pitestFileName,allMethodInfo);
        String pitestFileName2 = "/Users/qianqianzhu/phd/testability/mutation_testing_observability/pitest_result/commons-math-MATH_3_6_1_mutations.csv";
        Utils.parsePitestFile(pitestFileName2,allMethodInfo);
        System.out.println("generating LCS matrix & write results to file...");
-       String resultFileName = "./src/main/results/two_projects_lcs.csv";
-       Utils.generateLCSMatrix(allMethodInfo,resultFileName);
+       String resultFileName = "./src/main/results/commons-math-MATH_3_6_1_match_count.csv";
+       Utils.generateFeatureMatrix(allMethodInfo,resultFileName);
        System.out.println("finished!");
 
 

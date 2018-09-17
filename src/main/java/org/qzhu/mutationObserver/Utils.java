@@ -121,6 +121,67 @@ public class Utils {
         return LCSMatrix;
     }
 
+    private static List<Node<String>> generateSearchPatterns(){
+        List<Node<String>> searchPatterns = new LinkedList<>();
+        String[] statements = {"if","if-else","while","for","do"};
+        for(int i=0;i<statements.length;i++) {
+            // 1-node pattern
+            searchPatterns.add(new Node<>(statements[i]));
+            for(int j=0;j<statements.length;j++){
+                // 2=node pattern
+                Node<String> searchPattern = new Node<>(statements[i]);
+                searchPattern.addChild(new Node<>(statements[j]));
+                searchPatterns.add(new Node<>(searchPattern));
+            }
+        }
+        return searchPatterns;
+    }
+
+    public static void generateFeatureMatrix(LinkedList<MethodInfo> allMethodInfo,
+                                            String fileName) throws IOException {
+        int totalMethodNo = allMethodInfo.size();
+        BufferedWriter writer = new BufferedWriter(new FileWriter(fileName));
+
+        List<Node<String>> searchPatterns = generateSearchPatterns();
+        // file header
+        writer.write("method_name;is_public;is_void;method_lengh;kill_mut;total_mut;nested_depth;method_sequence");
+        for(int pid=0;pid<searchPatterns.size();pid++){
+            String treeString = "";
+            treeString = searchPatterns.get(pid).toString(treeString);
+            writer.write(";"+treeString);
+        }
+        writer.write("\n");
+
+        // match count
+        for(int mid =0;mid<totalMethodNo;mid++){
+            MethodInfo thisMethod = allMethodInfo.get(mid);
+            String treeString2 = "";
+            treeString2 = thisMethod.methodTreeRoot.toString(treeString2);
+
+            writer.write(thisMethod.method_name+";"
+                    +thisMethod.methodModifier.contains("public")+";"
+                    +thisMethod.isVoid+";"
+                    +(thisMethod.stop_line-thisMethod.start_line+1)+";"
+                    +thisMethod.kill_mut+";"
+                    +thisMethod.total_mut+";"
+                    +(thisMethod.methodTreeRoot.maxDepth()-1)+";"
+                    +treeString2+";");
+
+            for(int pid=0;pid<searchPatterns.size();pid++){
+                int matchCount = thisMethod.methodTreeRoot.matchCount(searchPatterns.get(pid));
+                writer.write(Integer.toString(matchCount));
+                if(pid!=searchPatterns.size()-1){
+                    writer.write(";");
+                }
+            }
+            writer.write("\n");
+            writer.flush();
+        }
+        writer.close();
+
+    }
+
+
     public static void parsePitestFile(String pitest_filename,LinkedList<MethodInfo> allMethodInfo) throws IOException {
         // create methods map for mutation score: key-className(without nested class)
         HashMap<String,ArrayList<MethodInfo>> allMethodMap = new HashMap<>();

@@ -72,15 +72,32 @@ public class MethodInfoVisitorTest {
         LinkedList<MethodInfo> allMethodInfo = methodWalker("/helloworld.java");
 
         MethodInfo testMethod1 = allMethodInfo.get(1);
-        //String treeString = "";
-        //treeString = testMethod1.methodTreeRoot.toString(treeString);
-        //assertEquals(treeString,"(root(for(if(if-else(if)(if-else(if)(if))))))");
+        String treeString = "";
+        treeString = testMethod1.methodTreeRoot.toString(treeString);
+        assertEquals(treeString,"(root(for(if(if-else(if)(if-else(if)(if))))))");
 
-        for(MethodInfo method:allMethodInfo){
-            String treeString = "";
-            treeString = method.methodTreeRoot.toString(treeString);
-            System.out.println(method.method_name+":"+treeString);
-        }
+//        for(MethodInfo method:allMethodInfo){
+//            Node<String> searchPattern = new Node<>("if-else");
+//            searchPattern.addChild(new Node<>("if"));
+//            String treeString = "";
+//            treeString = method.methodTreeRoot.toString(treeString);
+//            System.out.println(method.method_name+":"+treeString+","+method.methodTreeRoot.matchCount(searchPattern));
+//        }
+    }
+
+
+    @Test
+    public void testNestMethod(){
+        LinkedList<MethodInfo> allMethodInfo = methodWalker("/Memoizer.java");
+        MethodInfo testMethod1 = allMethodInfo.get(2);
+        String treeString = "";
+        treeString = testMethod1.methodTreeRoot.toString(treeString);
+        assertEquals(treeString,"(root)");
+
+        MethodInfo testMethod2 = allMethodInfo.get(3);
+        String treeString2 = "";
+        treeString = testMethod2.methodTreeRoot.toString(treeString2);
+        assertEquals(treeString,"(root(while(if(if))(if)))");
 
     }
 }

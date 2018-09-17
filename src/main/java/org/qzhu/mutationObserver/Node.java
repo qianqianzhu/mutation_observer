@@ -13,9 +13,11 @@ public class Node<T> implements Cloneable{
     }
 
     public Node(Node node) {
-        this.data = (T) node.getData();
-        this.children = node.getChildren();
-        this.parent = node.getParent();
+        if (node!=null) {
+            this.data = (T) node.getData();
+            this.children = node.getChildren();
+            this.parent = node.getParent();
+        }
     }
 
     public Node clone(){
@@ -52,7 +54,7 @@ public class Node<T> implements Cloneable{
     }
 
     public String toString(String treeString) {
-        treeString = treeString + "(" + this.data;
+        treeString = treeString + "(" + data;
         //System.out.print("("+node.getData());
         for(Node child:children){
             treeString = child.toString(treeString);
@@ -67,7 +69,7 @@ public class Node<T> implements Cloneable{
             return 0;
 
         int bigger = 0;
-        for(Node child: children){
+        for(Node<T> child: children){
             int childDepth = child.maxDepth();
             bigger = Math.max(bigger,childDepth);
         }
@@ -78,6 +80,7 @@ public class Node<T> implements Cloneable{
         if (parent != null) {
             throw new IllegalStateException("deleteRootNode not called on root");
         }
+
         Node<T> newParent = null;
         if (!getChildren().isEmpty()) {
             newParent = getChildren().get(0);
@@ -92,30 +95,51 @@ public class Node<T> implements Cloneable{
         return newParent;
     }
 
-    public int compareTo(Node<T> node){
-        System.out.println(this.data);
+//    public List<Node<T>> getNextLayer(){
+//        List<Node<T>> nextLayer = new LinkedList<Node<T>>();
+//        if(parent==null){
+//            return children;
+//        }else{
+//            for(Node thisLayerNode: parent.getChildren()){
+//                nextLayer.addAll(thisLayerNode.getChildren());
+//            }
+//            return nextLayer;
+//        }
+//    }
+
+    public List<Node<T>> matchFirst(Node<T> node){
         if(this==null)
-            return 0;
+            return null;
 
-//        if(this.maxDepth()<node.maxDepth())
-//            return 0;
+        List<Node<T>> matchNodes = new LinkedList<Node<T>>();
+        if (data.equals(node.getData())){
+            matchNodes.add(this);
+        }
 
+        for (Node<T> child:children){
+            matchNodes.addAll(child.matchFirst(node));
+        }
+        return matchNodes;
+    }
+
+    public int matchCount(Node<T> node){
         int count = 0;
-        if(data.equals(node.getData())){
-            for(Node child:children){
-                if(child.getData().equals(node.getChildren().get(0).getData())){
-                    count++;
-                }
-                List<Node> subChildren = child.getChildren();
-                for (Node subChild:subChildren){
-                    count = count+ subChild.compareTo(node.getChildren().get(0));
+        List<Node<T>> firstMatchs = matchFirst(node);
+        if (node.maxDepth()==1){
+            count = firstMatchs.size();
+
+        }
+        if(node.maxDepth()==2){
+            Node nextMatch = node.getChildren().get(0);
+
+            for (Node<T> first : firstMatchs) {
+                for (Node<T> firstChild : first.getChildren()) {
+                    if (firstChild.getData() == nextMatch.getData())
+                        count++;
                 }
             }
         }
 
-//        for(Node child:children){
-//            count = count + child.compareTo(node);
-//        }
         return count;
     }
 }

@@ -4,9 +4,6 @@ package org.qzhu.example;
 public class HelloWorld {
     int member = 0;
     public HelloWorld(){
-        if(member==0){
-            System.out.println("You are the first!");
-        }
     }
 
    public static void main(String[] args) {

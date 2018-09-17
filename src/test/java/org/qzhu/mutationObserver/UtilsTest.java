@@ -91,4 +91,15 @@ public class UtilsTest {
 
     }
 
+
+    @Test
+    public void testGenerateFeatureMatrix() throws IOException {
+
+        String fileName = "./src/test/resources/helloworld.java";
+        LinkedList<MethodInfo> allMethodInfo = Utils.getAllMethodInfoFromFile(fileName);
+        String resultFileName = "./src/main/results/test_match_count.csv";
+        Utils.generateFeatureMatrix(allMethodInfo,resultFileName);
+
+    }
+
 }
