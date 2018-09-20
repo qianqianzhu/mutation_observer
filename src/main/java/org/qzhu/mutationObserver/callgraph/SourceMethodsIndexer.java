@@ -9,14 +9,15 @@ import java.util.HashMap;
 
 /**
  * @author Qianqian Zhu
+ * Class copied with modifications from java-callgraph: https://github.com/gousiosg/java-callgraph
  */
 public class SourceMethodsIndexer extends EmptyVisitor {
     private JavaClass clazz;
     private HashMap<String,ArrayList<MethodInfo>> allMethodInfoMapByClassName;
 
-    public SourceMethodsIndexer(JavaClass jc, HashMap<String,ArrayList<MethodInfo>> allMethodInfoMap) {
+    public SourceMethodsIndexer(JavaClass jc, HashMap<String,ArrayList<MethodInfo>> allMethodInfoMapByClassName) {
         clazz = jc;
-        allMethodInfoMapByClassName = allMethodInfoMap;
+        this.allMethodInfoMapByClassName = allMethodInfoMapByClassName;
     }
 
     private void setMethodBytecodeName(String classNameWithoutNest,String methodName, int lineNo, String methodBytecodeName){
@@ -28,7 +29,6 @@ public class SourceMethodsIndexer extends EmptyVisitor {
                 }
             }
         }
-
     }
 
     public void visitJavaClass(JavaClass jc) {

@@ -2,6 +2,7 @@ package org.qzhu.mutationObserver;
 
 import org.junit.Test;
 
+import javax.xml.ws.RequestWrapper;
 import java.io.IOException;
 import java.util.*;
 
@@ -111,7 +112,48 @@ public class UtilsTest {
 //                for (MethodInfo method:allMethodInfo){
 //            System.out.println(method.method_name+" ; "+method.bytecodeName);
 //        }
+    }
 
+
+    @Test
+    public void testGenerateMethodInfoMapByMethodByteName(){
+//        String testJarFileName = "/Users/qianqianzhu/phd/testability/ast/project/commons-lang-LANG_3_7/target/commons-lang3-3.7-tests.jar";
+        String sourceJarFileName = "/Users/qianqianzhu/phd/testability/ast/project/commons-lang-LANG_3_7/target/commons-lang3-3.7.jar";
+
+        String fileName = "./src/test/resources/Memoizer.java";
+
+        LinkedList<MethodInfo> allMethodInfo = getAllMethodInfoFromSource(fileName);
+        HashMap<String,MethodInfo> allMethodInfoMap = generateMethodInfoMapByMethodByteName(sourceJarFileName,allMethodInfo);
+        assertEquals(allMethodInfoMap.get("org.apache.commons.lang3.concurrent.Memoizer$1:call()").method_name,
+                "org.apache.commons.lang3.concurrent.Memoizer$Callable:call");
+        assertEquals(allMethodInfoMap.get("org.apache.commons.lang3.concurrent.Memoizer:<init>(org.apache.commons.lang3.concurrent.Computable)").method_name,
+                "org.apache.commons.lang3.concurrent.Memoizer:<init>");
+
+//        for(String methodByteName:allMethodInfoMap.keySet()){
+//            System.out.println(methodByteName+" = "+allMethodInfoMap.get(methodByteName).method_name);
+//
+//        }
+
+    }
+
+    @Test
+    public void testSetAllMethodDirectTestFromJar(){
+        String testJarFileName = "/Users/qianqianzhu/phd/testability/ast/project/commons-lang-LANG_3_7/target/commons-lang3-3.7-tests.jar";
+        String sourceJarFileName = "/Users/qianqianzhu/phd/testability/ast/project/commons-lang-LANG_3_7/target/commons-lang3-3.7.jar";
+
+        String fileName = "./src/test/resources/Memoizer.java";
+        LinkedList<MethodInfo> allMethodInfo = getAllMethodInfoFromSource(fileName);
+        setAllMethodDirectTestFromJar(sourceJarFileName,testJarFileName,allMethodInfo);
+
+        assertEquals(allMethodInfo.get(0).bytecodeName,"org.apache.commons.lang3.concurrent.Memoizer:<init>(org.apache.commons.lang3.concurrent.Computable)");
+        assertEquals(allMethodInfo.get(0).directTestCases.size(),4);
+
+        assertEquals(allMethodInfo.get(3).bytecodeName,"org.apache.commons.lang3.concurrent.Memoizer:compute(java.lang.Object)");
+        assertEquals(allMethodInfo.get(3).directTestCases.size(),10);
+
+        //        for (MethodInfo method:allMethodInfo){
+//            System.out.println(method.bytecodeName+" ; "+method.directTestCases.toString());
+//        }
     }
 
 }

@@ -2,6 +2,10 @@ package org.qzhu.mutationObserver.callgraph;
 
 import org.apache.bcel.classfile.JavaClass;
 import org.apache.bcel.generic.*;
+import org.qzhu.mutationObserver.MethodInfo;
+
+import java.util.ArrayList;
+import java.util.HashMap;
 
 
 /**
@@ -13,14 +17,18 @@ public class MethodVisitor extends EmptyVisitor {
     JavaClass visitedClass;
     private MethodGen mg;
     private ConstantPoolGen cp;
-    private String format;
+//    private String format;
+    private String testCaseName;
+    private HashMap<String,MethodInfo> allMethodInfoMapByMethodByteName;
 
-    public MethodVisitor(MethodGen m, JavaClass jc) {
+    public MethodVisitor(MethodGen m, JavaClass jc, HashMap<String,MethodInfo> allMethodInfoMapByMethodByteName) {
         visitedClass = jc;
         mg = m;
         cp = mg.getConstantPool();
-        format = "M:" + visitedClass.getClassName() + ":" + mg.getName() +"(" + argumentList(mg.getArgumentTypes()) + ")"
-            + " " + "(%s)%s:%s(%s)";
+        this.allMethodInfoMapByMethodByteName = allMethodInfoMapByMethodByteName;
+        testCaseName = visitedClass.getClassName() + ":" + mg.getName() +"(" + argumentList(mg.getArgumentTypes()) + ")";
+//        format = "M:" + visitedClass.getClassName() + ":" + mg.getName() +"(" + argumentList(mg.getArgumentTypes()) + ")"
+//            + " " + "(%s)%s:%s(%s)";
     }
 
     private String argumentList(Type[] arguments) {
@@ -53,29 +61,42 @@ public class MethodVisitor extends EmptyVisitor {
                 && !(i instanceof ReturnInstruction));
     }
 
+    private void setDirectTestCases(InvokeInstruction i){
+        String invokeMethodName = i.getReferenceType(cp)+":"+i.getMethodName(cp)+"("+argumentList(i.getArgumentTypes(cp))+")";
+        if(allMethodInfoMapByMethodByteName.containsKey(invokeMethodName)){
+//            System.out.println(invokeMethodName);
+            MethodInfo methodInfo = allMethodInfoMapByMethodByteName.get(invokeMethodName);
+            methodInfo.directTestCases.add(testCaseName);
+        }
+    }
+
     @Override
     public void visitINVOKEVIRTUAL(INVOKEVIRTUAL i) {
-        System.out.println(String.format(format,"M",i.getReferenceType(cp),i.getMethodName(cp),argumentList(i.getArgumentTypes(cp))));
+        setDirectTestCases(i);
+//        System.out.println(String.format(format,"M",i.getReferenceType(cp),i.getMethodName(cp),argumentList(i.getArgumentTypes(cp))));
     }
 
     @Override
     public void visitINVOKEINTERFACE(INVOKEINTERFACE i) {
-        System.out.println(String.format(format,"I",i.getReferenceType(cp),i.getMethodName(cp),argumentList(i.getArgumentTypes(cp))));
+        setDirectTestCases(i);
+//        System.out.println(String.format(format,"I",i.getReferenceType(cp),i.getMethodName(cp),argumentList(i.getArgumentTypes(cp))));
     }
 
     @Override
     public void visitINVOKESPECIAL(INVOKESPECIAL i) {
-        System.out.println(String.format(format,"O",i.getReferenceType(cp),i.getMethodName(cp),argumentList(i.getArgumentTypes(cp))));
+        setDirectTestCases(i);
+//        System.out.println(String.format(format,"O",i.getReferenceType(cp),i.getMethodName(cp),argumentList(i.getArgumentTypes(cp))));
     }
 
     @Override
     public void visitINVOKESTATIC(INVOKESTATIC i) {
-        System.out.println(String.format(format,"S",i.getReferenceType(cp),i.getMethodName(cp),argumentList(i.getArgumentTypes(cp))));
+        setDirectTestCases(i);
+//        System.out.println(String.format(format,"S",i.getReferenceType(cp),i.getMethodName(cp),argumentList(i.getArgumentTypes(cp))));
     }
 
     @Override
     public void visitINVOKEDYNAMIC(INVOKEDYNAMIC i) {
-        System.out.println(String.format(format,"D",i.getType(cp),i.getMethodName(cp),
-                argumentList(i.getArgumentTypes(cp))));
+        setDirectTestCases(i);
+//        System.out.println(String.format(format,"D",i.getType(cp),i.getMethodName(cp), argumentList(i.getArgumentTypes(cp))));
     }
 }

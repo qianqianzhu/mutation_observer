@@ -9,6 +9,7 @@ import org.antlr.v4.runtime.tree.ParseTreeWalker;
 import org.apache.bcel.classfile.ClassParser;
 import org.qzhu.grammar.Java8Lexer;
 import org.qzhu.grammar.Java8Parser;
+import org.qzhu.mutationObserver.callgraph.ClassVisitor;
 import org.qzhu.mutationObserver.callgraph.SourceMethodsIndexer;
 
 import java.io.*;
@@ -70,7 +71,6 @@ public class Utils {
         }
     }
 
-
     public static void setAllMethodBytecodeNameFromJar(String jarFileName,LinkedList<MethodInfo> allMethodInfo){
         ClassParser cp;
         try {
@@ -93,6 +93,37 @@ public class Utils {
                 HashMap<String,ArrayList<MethodInfo>> allMethodInfoMap = generateMethodInfoMapByClassName(allMethodInfo);
                 SourceMethodsIndexer methodsIndexer = new SourceMethodsIndexer(cp.parse(),allMethodInfoMap);
                 methodsIndexer.start();
+            }
+
+        } catch (IOException e) {
+            System.err.println("Error while processing jar: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    public static void setAllMethodDirectTestFromJar(String sourceJarFileName,String testJarFileName, LinkedList<MethodInfo> allMethodInfo){
+        ClassParser cp;
+        try {
+            File f = new File(testJarFileName);
+            if (!f.exists()) {
+                System.err.println("Jar file " + testJarFileName + " does not exist");
+            }
+            JarFile jar = new JarFile(f);
+
+            Enumeration<JarEntry> entries = jar.entries();
+            while (entries.hasMoreElements()) {
+                JarEntry entry = entries.nextElement();
+                if (entry.isDirectory())
+                    continue;
+
+                if (!entry.getName().endsWith(".class"))
+                    continue;
+
+                cp = new ClassParser(testJarFileName,entry.getName());
+                HashMap<String,MethodInfo> allMethodInfoMap = generateMethodInfoMapByMethodByteName(sourceJarFileName,allMethodInfo);
+//                System.out.println(allMethodInfo.size());
+                ClassVisitor classVisitor = new ClassVisitor(cp.parse(),allMethodInfoMap);
+                classVisitor.start();
             }
 
         } catch (IOException e) {
@@ -237,9 +268,13 @@ public class Utils {
     }
 
 
-    public static HashMap<String,MethodInfo> generateMethodInfoMapByMethodByteName(LinkedList<MethodInfo> allMethodInfo){
+    public static HashMap<String,MethodInfo> generateMethodInfoMapByMethodByteName(String jarFile, LinkedList<MethodInfo> allMethodInfo){
         // create methods map for mutation score: key-method bytecode name, easy for iterating methodInfo
         HashMap<String,MethodInfo> allMethodInfoMapByMethodByteName = new HashMap<>();
+        if (allMethodInfo.get(0).bytecodeName==null){
+            setAllMethodBytecodeNameFromJar(jarFile,allMethodInfo);
+
+        }
         for(MethodInfo method: allMethodInfo){
             allMethodInfoMapByMethodByteName.put(method.bytecodeName,method);
         }

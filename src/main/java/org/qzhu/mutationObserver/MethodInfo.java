@@ -16,6 +16,7 @@ public class MethodInfo {
     public ArrayList<String> methodModifier;
     public boolean isVoid;
     public Node<String> methodTreeRoot;
+    public ArrayList<String> directTestCases = new ArrayList<>();
 
     public MethodInfo(int start_line, int stop_line, String method_name) {
         this.start_line = start_line;
