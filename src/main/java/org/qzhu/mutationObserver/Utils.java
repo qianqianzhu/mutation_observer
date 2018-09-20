@@ -6,18 +6,19 @@ import org.antlr.v4.runtime.Lexer;
 import org.antlr.v4.runtime.TokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
+import org.apache.bcel.classfile.ClassParser;
 import org.qzhu.grammar.Java8Lexer;
 import org.qzhu.grammar.Java8Parser;
+import org.qzhu.mutationObserver.callgraph.SourceMethodsIndexer;
 
 import java.io.*;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
 
 /**
  * @author Qianqian Zhu
@@ -42,7 +43,7 @@ public class Utils {
     }
 
 
-    public static LinkedList<MethodInfo> getAllMethodInfoFromFile(String fileName){
+    public static LinkedList<MethodInfo> getAllMethodInfoFromSource(String fileName){
         try {
             // get the input file as an InputStream
             InputStream inputStream = new FileInputStream(fileName);
@@ -66,6 +67,37 @@ public class Utils {
         } catch (IOException e) {
             e.printStackTrace();
             return null;
+        }
+    }
+
+
+    public static void setAllMethodBytecodeNameFromJar(String jarFileName,LinkedList<MethodInfo> allMethodInfo){
+        ClassParser cp;
+        try {
+            File f = new File(jarFileName);
+            if (!f.exists()) {
+                System.err.println("Jar file " + jarFileName + " does not exist");
+            }
+            JarFile jar = new JarFile(f);
+
+            Enumeration<JarEntry> entries = jar.entries();
+            while (entries.hasMoreElements()) {
+                JarEntry entry = entries.nextElement();
+                if (entry.isDirectory())
+                    continue;
+
+                if (!entry.getName().endsWith(".class"))
+                    continue;
+
+                cp = new ClassParser(jarFileName,entry.getName());
+                HashMap<String,ArrayList<MethodInfo>> allMethodInfoMap = generateMethodInfoMapByClassName(allMethodInfo);
+                SourceMethodsIndexer methodsIndexer = new SourceMethodsIndexer(cp.parse(),allMethodInfoMap);
+                methodsIndexer.start();
+            }
+
+        } catch (IOException e) {
+            System.err.println("Error while processing jar: " + e.getMessage());
+            e.printStackTrace();
         }
     }
 
@@ -181,10 +213,9 @@ public class Utils {
 
     }
 
-
-    public static void parsePitestFile(String pitest_filename,LinkedList<MethodInfo> allMethodInfo) throws IOException {
-        // create methods map for mutation score: key-className(without nested class)
-        HashMap<String,ArrayList<MethodInfo>> allMethodMap = new HashMap<>();
+    public static HashMap<String,ArrayList<MethodInfo>> generateMethodInfoMapByClassName(LinkedList<MethodInfo> allMethodInfo){
+        // create methods map for mutation score: key-className(without nested class), easy for iterating methodInfo
+        HashMap<String,ArrayList<MethodInfo>> allMethodInfoMapByClassName = new HashMap<>();
         for(MethodInfo method: allMethodInfo){
             String methodName = method.method_name;
             String[] nameInfos = methodName.split(":");
@@ -194,14 +225,31 @@ public class Utils {
                 key = className.substring(0,className.indexOf("$"));
             }
             ArrayList<MethodInfo> methodInfos;
-            if(!allMethodMap.containsKey(key)){
+            if(!allMethodInfoMapByClassName.containsKey(key)){
                 methodInfos = new ArrayList<>();
             }else{
-                methodInfos = allMethodMap.get(key);
+                methodInfos = allMethodInfoMapByClassName.get(key);
             }
             methodInfos.add(method);
-            allMethodMap.put(key,methodInfos);
+            allMethodInfoMapByClassName.put(key,methodInfos);
         }
+        return allMethodInfoMapByClassName;
+    }
+
+
+    public static HashMap<String,MethodInfo> generateMethodInfoMapByMethodByteName(LinkedList<MethodInfo> allMethodInfo){
+        // create methods map for mutation score: key-method bytecode name, easy for iterating methodInfo
+        HashMap<String,MethodInfo> allMethodInfoMapByMethodByteName = new HashMap<>();
+        for(MethodInfo method: allMethodInfo){
+            allMethodInfoMapByMethodByteName.put(method.bytecodeName,method);
+        }
+        return allMethodInfoMapByMethodByteName;
+    }
+
+
+    public static void parsePitestFile(String pitest_filename,LinkedList<MethodInfo> allMethodInfo) throws IOException {
+        // create methods map for mutation score: key-className(without nested class)
+        HashMap<String,ArrayList<MethodInfo>> allMethodMap = generateMethodInfoMapByClassName(allMethodInfo);
 
         // read pit results from file
         BufferedReader pitest_reader = new BufferedReader(new FileReader(pitest_filename));

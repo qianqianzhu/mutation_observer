@@ -2,10 +2,14 @@ package org.qzhu.mutationObserver;
 
 import java.util.ArrayList;
 
+/**
+ * @author Qianqian Zhu
+ */
 public class MethodInfo {
     public int start_line;
     public int stop_line;
     public String method_name;
+    public String bytecodeName;
     public ArrayList<String> method_sequence;
     public int total_mut;
     public int kill_mut;

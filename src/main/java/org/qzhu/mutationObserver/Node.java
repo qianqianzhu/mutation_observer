@@ -3,6 +3,10 @@ package org.qzhu.mutationObserver;
 import java.util.LinkedList;
 import java.util.List;
 
+/**
+ * @author Qianqian Zhu
+ * Class copied with modifications from https://www.javagists.com/java-tree-data-structure
+ */
 public class Node<T> implements Cloneable{
     private T data = null;
     private List<Node<T>> children = new LinkedList<>();

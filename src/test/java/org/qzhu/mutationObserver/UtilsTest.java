@@ -3,12 +3,10 @@ package org.qzhu.mutationObserver;
 import org.junit.Test;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 import static org.junit.Assert.*;
+import static org.qzhu.mutationObserver.Utils.*;
 
 /**
  * @author Qianqian Zhu
@@ -20,8 +18,8 @@ public class UtilsTest {
 
         String testDir ="./src/main/resources/";
         List<String> fileNames = new ArrayList<>();
-        fileNames = Utils.getAllJavaFilesFromDir(fileNames,testDir);
-        assertEquals(fileNames.size(),2);
+        fileNames = getAllJavaFilesFromDir(fileNames,testDir);
+        assertEquals(fileNames.size(),3);
         assertTrue(fileNames.contains("./src/main/resources/helloworld.java"));
         assertTrue(fileNames.contains("./src/main/resources/ClassPathUtils.java"));
     }
@@ -38,7 +36,7 @@ public class UtilsTest {
         a.addAll(Arrays.asList(sq1));
         b.addAll(Arrays.asList(sq2));
 
-        assertEquals(Utils.lcs(a,b),4);
+        assertEquals(lcs(a,b),4);
 
     }
 
@@ -53,52 +51,66 @@ public class UtilsTest {
         a.addAll(Arrays.asList(sq1));
         b.addAll(Arrays.asList(sq2));
 
-        assertEquals(Utils.lcs(a,b),3);
+        assertEquals(lcs(a,b),3);
 
     }
 
 
     @Test
     public void testParsePitestFile() throws IOException {
-        String testDir ="./src/main/resources/";
         String pitestFileName = "/Users/qianqianzhu/phd/testability/Observer/pitest_result/commons-lang-LANG_3_7_mutations.csv";
+        String fileName = "./src/test/resources/Memoizer.java";
+        LinkedList<MethodInfo> allMethodInfo = getAllMethodInfoFromSource(fileName);
 
-        List<String> fileNames = new ArrayList<>();
-        fileNames = Utils.getAllJavaFilesFromDir(fileNames,testDir);
-        LinkedList<MethodInfo> allMethodInfo = new LinkedList<>();
-        for(String fileName: fileNames){
-            System.out.println("Processing "+fileName);
-            LinkedList<MethodInfo> methodInfo = Utils.getAllMethodInfoFromFile(fileName);
-            //System.out.println(methodCollector.methodNameCollector);
-            //System.out.println(methodCollector.methodSequenceCollector);
-            allMethodInfo.addAll(methodInfo);
-        }
-
-        System.out.println("generating LCS matrix...");
         int totalMethod = allMethodInfo.size();
         System.out.println("Total method no.: "+totalMethod);
         System.out.println("Parsing Pitest results...");
 
-        Utils.parsePitestFile(pitestFileName,allMethodInfo);
-        for (MethodInfo method:allMethodInfo){
-            System.out.println(method.method_name+":"+method.kill_mut+" "+method.total_mut);
-        }
+        parsePitestFile(pitestFileName,allMethodInfo);
+//        for (MethodInfo method:allMethodInfo){
+//            System.out.println(method.method_name+":"+method.kill_mut+" "+method.total_mut);
+//        }
 
+        assertEquals(allMethodInfo.get(0).method_name,"org.apache.commons.lang3.concurrent.Memoizer:<init>");
         assertEquals(allMethodInfo.get(0).total_mut,0);
         assertEquals(allMethodInfo.get(0).kill_mut,0);
-        assertEquals(allMethodInfo.get(1).total_mut,1);
-        assertEquals(allMethodInfo.get(1).kill_mut,1);
+
+        assertEquals(allMethodInfo.get(3).method_name,"org.apache.commons.lang3.concurrent.Memoizer:compute");
+        assertEquals(allMethodInfo.get(3).total_mut,6);
+        assertEquals(allMethodInfo.get(3).kill_mut,6);
 
     }
 
 
     @Test
     public void testGenerateFeatureMatrix() throws IOException {
-
         String fileName = "./src/test/resources/helloworld.java";
-        LinkedList<MethodInfo> allMethodInfo = Utils.getAllMethodInfoFromFile(fileName);
+        LinkedList<MethodInfo> allMethodInfo = getAllMethodInfoFromSource(fileName);
         String resultFileName = "./src/main/results/test_match_count.csv";
-        Utils.generateFeatureMatrix(allMethodInfo,resultFileName);
+        generateFeatureMatrix(allMethodInfo,resultFileName);
+
+    }
+
+
+    @Test
+    public void testSetAllMethodBytecodeNameFromJar(){
+        String jarFileName = "/Users/qianqianzhu/phd/testability/ast/project/commons-lang-LANG_3_7/target/commons-lang3-3.7.jar";
+        String fileName = "./src/test/resources/Memoizer.java";
+        LinkedList<MethodInfo> allMethodInfo = getAllMethodInfoFromSource(fileName);
+        setAllMethodBytecodeNameFromJar(jarFileName,allMethodInfo);
+
+        assertEquals(allMethodInfo.get(0).method_name,"org.apache.commons.lang3.concurrent.Memoizer:<init>");
+        assertEquals(allMethodInfo.get(0).bytecodeName,"org.apache.commons.lang3.concurrent.Memoizer:<init>(org.apache.commons.lang3.concurrent.Computable)");
+
+        assertEquals(allMethodInfo.get(2).method_name,"org.apache.commons.lang3.concurrent.Memoizer$Callable:call");
+        assertEquals(allMethodInfo.get(2).bytecodeName,"org.apache.commons.lang3.concurrent.Memoizer$1:call()");
+
+        assertEquals(allMethodInfo.get(3).method_name,"org.apache.commons.lang3.concurrent.Memoizer:compute");
+        assertEquals(allMethodInfo.get(3).bytecodeName,"org.apache.commons.lang3.concurrent.Memoizer:compute(java.lang.Object)");
+
+//                for (MethodInfo method:allMethodInfo){
+//            System.out.println(method.method_name+" ; "+method.bytecodeName);
+//        }
 
     }
 
