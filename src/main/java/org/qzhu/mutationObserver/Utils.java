@@ -207,7 +207,7 @@ public class Utils {
 
         List<Node<String>> searchPatterns = generateSearchPatterns();
         // file header
-        writer.write("method_name;is_public;is_void;method_lengh;kill_mut;total_mut;nested_depth;method_sequence");
+        writer.write("method_name;is_public;is_void;method_lengh;kill_mut;total_mut;nested_depth;direct_test_no;method_sequence");
         for(int pid=0;pid<searchPatterns.size();pid++){
             String treeString = "";
             treeString = searchPatterns.get(pid).toString(treeString);
@@ -228,6 +228,7 @@ public class Utils {
                     +thisMethod.kill_mut+";"
                     +thisMethod.total_mut+";"
                     +(thisMethod.methodTreeRoot.maxDepth()-1)+";"
+                    +thisMethod.directTestCases.size()+";"
                     +treeString2+";");
 
             for(int pid=0;pid<searchPatterns.size();pid++){

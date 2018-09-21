@@ -14,8 +14,11 @@ class Main {
 
 //       String testDir ="./src/main/resources/";
        String baseDir = "/Users/qianqianzhu/phd/testability/ast/project/";
-       String project = "curator-curator-x-zkclient-bridge-3.0.0";
+       String project = "commons-lang-LANG_3_7";
        String testDir = baseDir+project+"/src/main/java/";
+       String sourceJarFileName = baseDir+project+"/target/commons-lang3-3.7.jar";
+       String testJarFileName = baseDir+project+"/target/commons-lang3-3.7-tests.jar";
+
        List<String> fileNames = new ArrayList<>();
        fileNames = Utils.getAllJavaFilesFromDir(fileNames,testDir);
 
@@ -39,10 +42,12 @@ class Main {
        System.out.println("Parsing Pitest results...");
        String pitestFileName = "/Users/qianqianzhu/phd/testability/mutation_testing_observability/pitest_result/"+project+"_mutations.csv";
        Utils.parsePitestFile(pitestFileName,allMethodInfo);
-//       String pitestFileName2 = "/Users/qianqianzhu/phd/testability/mutation_testing_observability/pitest_result/commons-math-MATH_3_6_1_mutations.csv";
-//       Utils.parsePitestFile(pitestFileName2,allMethodInfo);
+
+       System.out.println("Parsing test Jar results...");
+       Utils.setAllMethodDirectTestFromJar(sourceJarFileName,testJarFileName,allMethodInfo);;
+
        System.out.println("generating feature matrix & write results to file...");
-       String resultFileName = "./src/main/results/"+project+"_match_count.csv";
+       String resultFileName = "./src/main/results/"+project+"_all_feature.csv";
        Utils.generateFeatureMatrix(allMethodInfo,resultFileName);
        System.out.println("finished!");
 
