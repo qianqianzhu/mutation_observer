@@ -8,6 +8,7 @@ import java.util.*;
 
 import static org.junit.Assert.*;
 import static org.qzhu.mutationObserver.Utils.*;
+import static org.qzhu.mutationObserver.Utils.setAllMethodDirectTestFromJar;
 
 /**
  * @author Qianqian Zhu
@@ -19,7 +20,7 @@ public class UtilsTest {
 
         String testDir ="./src/main/resources/";
         List<String> fileNames = new ArrayList<>();
-        fileNames = getAllJavaFilesFromDir(fileNames,testDir);
+        fileNames = getAllFilesFromDir(fileNames,".java",testDir);
         assertEquals(fileNames.size(),3);
         assertTrue(fileNames.contains("./src/main/resources/helloworld.java"));
         assertTrue(fileNames.contains("./src/main/resources/ClassPathUtils.java"));
@@ -109,15 +110,28 @@ public class UtilsTest {
         assertEquals(allMethodInfo.get(3).method_name,"org.apache.commons.lang3.concurrent.Memoizer:compute");
         assertEquals(allMethodInfo.get(3).bytecodeName,"org.apache.commons.lang3.concurrent.Memoizer:compute(java.lang.Object)");
 
-//                for (MethodInfo method:allMethodInfo){
-//            System.out.println(method.method_name+" ; "+method.bytecodeName);
-//        }
+    }
+
+    @Test
+    public void testSetAllMethodBytecodeNameFromDir(){
+        String classDir = "/Users/qianqianzhu/phd/testability/ast/project/commons-lang-LANG_3_7/target/classes";
+        String fileName = "./src/test/resources/Memoizer.java";
+        LinkedList<MethodInfo> allMethodInfo = getAllMethodInfoFromSource(fileName);
+        setAllMethodBytecodeNameFromDir(classDir,allMethodInfo);
+
+        assertEquals(allMethodInfo.get(0).method_name,"org.apache.commons.lang3.concurrent.Memoizer:<init>");
+        assertEquals(allMethodInfo.get(0).bytecodeName,"org.apache.commons.lang3.concurrent.Memoizer:<init>(org.apache.commons.lang3.concurrent.Computable)");
+
+        assertEquals(allMethodInfo.get(2).method_name,"org.apache.commons.lang3.concurrent.Memoizer$Callable:call");
+        assertEquals(allMethodInfo.get(2).bytecodeName,"org.apache.commons.lang3.concurrent.Memoizer$1:call()");
+
+        assertEquals(allMethodInfo.get(3).method_name,"org.apache.commons.lang3.concurrent.Memoizer:compute");
+        assertEquals(allMethodInfo.get(3).bytecodeName,"org.apache.commons.lang3.concurrent.Memoizer:compute(java.lang.Object)");
     }
 
 
     @Test
     public void testGenerateMethodInfoMapByMethodByteName(){
-//        String testJarFileName = "/Users/qianqianzhu/phd/testability/ast/project/commons-lang-LANG_3_7/target/commons-lang3-3.7-tests.jar";
         String sourceJarFileName = "/Users/qianqianzhu/phd/testability/ast/project/commons-lang-LANG_3_7/target/commons-lang3-3.7.jar";
 
         String fileName = "./src/test/resources/Memoizer.java";
@@ -128,11 +142,6 @@ public class UtilsTest {
                 "org.apache.commons.lang3.concurrent.Memoizer$Callable:call");
         assertEquals(allMethodInfoMap.get("org.apache.commons.lang3.concurrent.Memoizer:<init>(org.apache.commons.lang3.concurrent.Computable)").method_name,
                 "org.apache.commons.lang3.concurrent.Memoizer:<init>");
-
-//        for(String methodByteName:allMethodInfoMap.keySet()){
-//            System.out.println(methodByteName+" = "+allMethodInfoMap.get(methodByteName).method_name);
-//
-//        }
 
     }
 
@@ -155,5 +164,22 @@ public class UtilsTest {
 //            System.out.println(method.bytecodeName+" ; "+method.directTestCases.toString());
 //        }
     }
+
+    @Test
+    public void testSetAllMethodDirectTestFromFromDir(){
+        String sourceDir = "/Users/qianqianzhu/phd/testability/ast/project/commons-lang-LANG_3_7/target/classes";
+        String testDir = "/Users/qianqianzhu/phd/testability/ast/project/commons-lang-LANG_3_7/target/test-classes";
+
+        String fileName = "./src/test/resources/Memoizer.java";
+        LinkedList<MethodInfo> allMethodInfo = getAllMethodInfoFromSource(fileName);
+        setAllMethodDirectTestFromDir(sourceDir,testDir,allMethodInfo);
+
+        assertEquals(allMethodInfo.get(0).bytecodeName,"org.apache.commons.lang3.concurrent.Memoizer:<init>(org.apache.commons.lang3.concurrent.Computable)");
+        assertEquals(allMethodInfo.get(0).directTestCases.size(),4);
+
+        assertEquals(allMethodInfo.get(3).bytecodeName,"org.apache.commons.lang3.concurrent.Memoizer:compute(java.lang.Object)");
+        assertEquals(allMethodInfo.get(3).directTestCases.size(),10);
+    }
+
 
 }

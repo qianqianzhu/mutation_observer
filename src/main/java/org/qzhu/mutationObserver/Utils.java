@@ -13,6 +13,8 @@ import org.qzhu.mutationObserver.callgraph.ClassVisitor;
 import org.qzhu.mutationObserver.callgraph.SourceMethodsIndexer;
 
 import java.io.*;
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -26,13 +28,13 @@ import java.util.jar.JarFile;
  */
 public class Utils {
 
-    public static List<String> getAllJavaFilesFromDir(List<String> fileNames, String dir) {
+    public static List<String> getAllFilesFromDir(List<String> fileNames,String suffix ,String dir) {
         try(DirectoryStream<Path> stream = Files.newDirectoryStream(Paths.get(dir))) {
             for (Path path : stream) {
                 if(path.toFile().isDirectory()) {
-                    getAllJavaFilesFromDir(fileNames, String.valueOf(path));
+                    getAllFilesFromDir(fileNames, suffix ,String.valueOf(path));
                 } else {
-                    if(path.toAbsolutePath().toString().endsWith(".java")) {
+                    if(path.toAbsolutePath().toString().endsWith(suffix)) {
                         fileNames.add(path.toString());
                     }
                 }
@@ -101,6 +103,22 @@ public class Utils {
         }
     }
 
+    public static void setAllMethodBytecodeNameFromDir(String dir, LinkedList<MethodInfo> allMethodInfo){
+        try {
+            List<String> fileNames = new ArrayList<>();
+            fileNames = Utils.getAllFilesFromDir(fileNames,".class",dir);
+            for(String filename: fileNames) {
+                ClassParser cp = new ClassParser(filename);
+                HashMap<String, ArrayList<MethodInfo>> allMethodInfoMap = generateMethodInfoMapByClassName(allMethodInfo);
+                SourceMethodsIndexer methodsIndexer = new SourceMethodsIndexer(cp.parse(), allMethodInfoMap);
+                methodsIndexer.start();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+
     public static void setAllMethodDirectTestFromJar(String sourceJarFileName,String testJarFileName, LinkedList<MethodInfo> allMethodInfo){
         ClassParser cp;
         try {
@@ -131,6 +149,23 @@ public class Utils {
             e.printStackTrace();
         }
     }
+
+
+    public static void setAllMethodDirectTestFromDir(String sourceDir, String testDir, LinkedList<MethodInfo> allMethodInfo){
+        try {
+            List<String> fileNames = new ArrayList<>();
+            fileNames = Utils.getAllFilesFromDir(fileNames,".class",testDir);
+            for(String filename: fileNames) {
+                ClassParser cp =new ClassParser(filename);
+                HashMap<String,MethodInfo> allMethodInfoMap = generateMethodInfoMapByMethodByteName(sourceDir,allMethodInfo);
+                ClassVisitor classVisitor = new ClassVisitor(cp.parse(),allMethodInfoMap);
+                classVisitor.start();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
 
     public static int lcs(ArrayList<String> a, ArrayList<String> b){
         int aLen = a.size();
@@ -269,12 +304,15 @@ public class Utils {
     }
 
 
-    public static HashMap<String,MethodInfo> generateMethodInfoMapByMethodByteName(String jarFile, LinkedList<MethodInfo> allMethodInfo){
+    public static HashMap<String,MethodInfo> generateMethodInfoMapByMethodByteName(String file, LinkedList<MethodInfo> allMethodInfo){
         // create methods map for mutation score: key-method bytecode name, easy for iterating methodInfo
         HashMap<String,MethodInfo> allMethodInfoMapByMethodByteName = new HashMap<>();
         if (allMethodInfo.get(0).bytecodeName==null){
-            setAllMethodBytecodeNameFromJar(jarFile,allMethodInfo);
-
+            if(file.endsWith(".jar")) {
+                setAllMethodBytecodeNameFromJar(file, allMethodInfo);
+            }else{
+                setAllMethodBytecodeNameFromDir(file, allMethodInfo);
+            }
         }
         for(MethodInfo method: allMethodInfo){
             allMethodInfoMapByMethodByteName.put(method.bytecodeName,method);

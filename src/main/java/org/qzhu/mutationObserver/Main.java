@@ -11,21 +11,32 @@ import java.util.List;
 class Main {
 
    public static void main(String[] args) throws IOException {
+       String []  projects = {
+               "Bukkit-1.7.9-R0.2",
+               "commons-lang-LANG_3_7",
+               "commons-math-MATH_3_6_1",
+               "java-apns-apns-0.2.3",
+               "jfreechart-1.5.0",
+               "pysonar2-2.1"};
 
-//       String testDir ="./src/main/resources/";
+       for (String project: projects){
+           analyse(project);
+       }
+
+   }
+
+
+   public static void analyse(String project) throws IOException {
+       System.out.println("Analysing "+project);
+
        String baseDir = "/Users/qianqianzhu/phd/testability/ast/project/";
-       String project = "commons-lang-LANG_3_7";
        String testDir = baseDir+project+"/src/main/java/";
-       String sourceJarFileName = baseDir+project+"/target/commons-lang3-3.7.jar";
-       String testJarFileName = baseDir+project+"/target/commons-lang3-3.7-tests.jar";
+       String sourceClassDir = baseDir+project+"/target/classes/";
+       String testClassDir = baseDir+project+"/target/test-classes/";
+
 
        List<String> fileNames = new ArrayList<>();
-       fileNames = Utils.getAllJavaFilesFromDir(fileNames,testDir);
-
-//       String testDir2 = "/Users/qianqianzhu/phd/testability/commons-math-MATH_3_6_1_pitest/src/main/java/";
-//       List<String> fileNames2 = new ArrayList<>();
-//       fileNames2 = Utils.getAllJavaFilesFromDir(fileNames2,testDir2);
-//       fileNames.addAll(fileNames2);
+       fileNames = Utils.getAllFilesFromDir(fileNames,".java",testDir);
 
        LinkedList<MethodInfo> allMethodInfo = new LinkedList<>();
        for(String fileName: fileNames){
@@ -43,8 +54,8 @@ class Main {
        String pitestFileName = "/Users/qianqianzhu/phd/testability/mutation_testing_observability/pitest_result/"+project+"_mutations.csv";
        Utils.parsePitestFile(pitestFileName,allMethodInfo);
 
-       System.out.println("Parsing test Jar results...");
-       Utils.setAllMethodDirectTestFromJar(sourceJarFileName,testJarFileName,allMethodInfo);;
+       System.out.println("Parsing test classes results...");
+       Utils.setAllMethodDirectTestFromDir(sourceClassDir,testClassDir,allMethodInfo);
 
        System.out.println("generating feature matrix & write results to file...");
        String resultFileName = "./src/main/results/"+project+"_all_feature.csv";
