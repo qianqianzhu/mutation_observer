@@ -11,10 +11,9 @@ import org.qzhu.grammar.Java8Lexer;
 import org.qzhu.grammar.Java8Parser;
 import org.qzhu.mutationObserver.callgraph.ClassVisitor;
 import org.qzhu.mutationObserver.callgraph.SourceMethodsIndexer;
+import org.qzhu.mutationObserver.source.*;
 
 import java.io.*;
-import java.net.URL;
-import java.net.URLClassLoader;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -46,7 +45,7 @@ public class Utils {
     }
 
 
-    public static LinkedList<MethodInfo> getAllMethodInfoFromSource(String fileName){
+    public static LinkedList<MethodInfo> getAllMethodInfoFromSource(String fileName,boolean is_simple){
         try {
             // get the input file as an InputStream
             InputStream inputStream = new FileInputStream(fileName);
@@ -61,7 +60,13 @@ public class Utils {
             // create standard walker
             ParseTreeWalker walker = new ParseTreeWalker();
             // add self-implemented listener
-            MethodInfoVisitor methodVisitor = new MethodInfoVisitor();
+            MethodInfoVisitor methodVisitor;
+            if(is_simple){
+                methodVisitor = new SimpleMethodInfoVisitor();
+            }
+            else{
+                methodVisitor = new MethodInfoVisitor();
+            }
             // walk the ast with self-implemented listener
             walker.walk(methodVisitor,tree);
             //System.out.println(tree.toStringTree(parser)); // print tree as text
@@ -92,7 +97,7 @@ public class Utils {
                     continue;
 
                 cp = new ClassParser(jarFileName,entry.getName());
-                HashMap<String,ArrayList<MethodInfo>> allMethodInfoMap = generateMethodInfoMapByClassName(allMethodInfo);
+                HashMap<String,ArrayList<MethodInfo>> allMethodInfoMap = generateMethodInfoMapByClassName(allMethodInfo,true);
                 SourceMethodsIndexer methodsIndexer = new SourceMethodsIndexer(cp.parse(),allMethodInfoMap);
                 methodsIndexer.start();
             }
@@ -109,7 +114,7 @@ public class Utils {
             fileNames = Utils.getAllFilesFromDir(fileNames,".class",dir);
             for(String filename: fileNames) {
                 ClassParser cp = new ClassParser(filename);
-                HashMap<String, ArrayList<MethodInfo>> allMethodInfoMap = generateMethodInfoMapByClassName(allMethodInfo);
+                HashMap<String, ArrayList<MethodInfo>> allMethodInfoMap = generateMethodInfoMapByClassName(allMethodInfo,true);
                 SourceMethodsIndexer methodsIndexer = new SourceMethodsIndexer(cp.parse(), allMethodInfoMap);
                 methodsIndexer.start();
             }
@@ -235,14 +240,58 @@ public class Utils {
         return searchPatterns;
     }
 
+    private static List<Node<String>> generateSimpleSearchPatterns(){
+        List<Node<String>> searchPatterns = new LinkedList<>();
+        String[] statements = {"cond","loop"};
+        for(int i=0;i<statements.length;i++) {
+            // 1-node pattern
+            searchPatterns.add(new Node<>(statements[i]));
+            for(int j=0;j<statements.length;j++){
+                // 2=node pattern
+                Node<String> searchPattern = new Node<>(statements[i]);
+                searchPattern.addChild(new Node<>(statements[j]));
+                searchPatterns.add(new Node<>(searchPattern));
+            }
+        }
+        return searchPatterns;
+    }
+
+    private static Map<String,ClassInfo> sumMethodInfoByClassName(LinkedList<MethodInfo> allMethodInfo){
+        Map<String,ClassInfo> methodInfoSum = new HashMap<>();
+        HashMap<String,ArrayList<MethodInfo>> allMethodInfoMap = generateMethodInfoMapByClassName(allMethodInfo,false);
+        for (String className:allMethodInfoMap.keySet()){
+            ClassInfo methodTypeSum;
+            // initialise method type sum
+            methodTypeSum = new ClassInfo(className);
+            methodTypeSum.totalMethodNo = allMethodInfoMap.get(className).size();
+
+            for (MethodInfo method: allMethodInfoMap.get(className)){
+
+                if(method.isVoid){
+                    methodTypeSum.voidMethodNo+=1;
+                }
+                if(method.isGetter){
+                    methodTypeSum.getterMethodNo+=1;
+                }
+            }
+            methodInfoSum.put(className,methodTypeSum);
+        }
+
+        return methodInfoSum;
+    }
+
     public static void generateFeatureMatrix(LinkedList<MethodInfo> allMethodInfo,
-                                            String fileName) throws IOException {
+                                            String fileName,boolean is_simple) throws IOException {
         int totalMethodNo = allMethodInfo.size();
         BufferedWriter writer = new BufferedWriter(new FileWriter(fileName));
-
-        List<Node<String>> searchPatterns = generateSearchPatterns();
+        List<Node<String>> searchPatterns;
+        if(!is_simple){
+            searchPatterns= generateSearchPatterns();
+        } else{
+            searchPatterns= generateSimpleSearchPatterns();
+        }
         // file header
-        writer.write("method_name;is_public;is_void;method_lengh;kill_mut;total_mut;nested_depth;direct_test_no;method_sequence");
+        writer.write("method_name;is_public;is_static;is_void;is_nested;method_length;kill_mut;total_mut;nested_depth;direct_test_no;void_no;getter_no;total_method_no;method_sequence");
         for(int pid=0;pid<searchPatterns.size();pid++){
             String treeString = "";
             treeString = searchPatterns.get(pid).toString(treeString);
@@ -250,20 +299,29 @@ public class Utils {
         }
         writer.write("\n");
 
+        // get class-level feature;
+        Map<String,ClassInfo> classInfoMap = sumMethodInfoByClassName(allMethodInfo);
         // match count
         for(int mid =0;mid<totalMethodNo;mid++){
             MethodInfo thisMethod = allMethodInfo.get(mid);
             String treeString2 = "";
             treeString2 = thisMethod.methodTreeRoot.toString(treeString2);
-
+            String methodName = thisMethod.method_name;
+            String str[] = methodName.split(":");
+            String className = str[0];
             writer.write(thisMethod.method_name+";"
                     +thisMethod.methodModifier.contains("public")+";"
+                    +thisMethod.methodModifier.contains("static")+";"
                     +thisMethod.isVoid+";"
+                    +thisMethod.isNested+";"
                     +(thisMethod.stop_line-thisMethod.start_line+1)+";"
                     +thisMethod.kill_mut+";"
                     +thisMethod.total_mut+";"
                     +(thisMethod.methodTreeRoot.maxDepth()-1)+";"
                     +thisMethod.directTestCases.size()+";"
+                    +classInfoMap.get(className).voidMethodNo+";"
+                    +classInfoMap.get(className).getterMethodNo+";"
+                    +classInfoMap.get(className).totalMethodNo+";"
                     +treeString2+";");
 
             for(int pid=0;pid<searchPatterns.size();pid++){
@@ -280,15 +338,15 @@ public class Utils {
 
     }
 
-    public static HashMap<String,ArrayList<MethodInfo>> generateMethodInfoMapByClassName(LinkedList<MethodInfo> allMethodInfo){
-        // create methods map for mutation score: key-className(without nested class), easy for iterating methodInfo
+    public static HashMap<String,ArrayList<MethodInfo>> generateMethodInfoMapByClassName(LinkedList<MethodInfo> allMethodInfo, boolean withoutNestedClass){
+        // create methods map for mutation score: key-className(with/without nested class), without for matching source code and bytecode
         HashMap<String,ArrayList<MethodInfo>> allMethodInfoMapByClassName = new HashMap<>();
         for(MethodInfo method: allMethodInfo){
             String methodName = method.method_name;
             String[] nameInfos = methodName.split(":");
             String className =nameInfos[0];
             String key = className;
-            if(className.indexOf("$")!=-1){
+            if(withoutNestedClass && className.indexOf("$")!=-1){
                 key = className.substring(0,className.indexOf("$"));
             }
             ArrayList<MethodInfo> methodInfos;
@@ -323,7 +381,7 @@ public class Utils {
 
     public static void parsePitestFile(String pitest_filename,LinkedList<MethodInfo> allMethodInfo) throws IOException {
         // create methods map for mutation score: key-className(without nested class)
-        HashMap<String,ArrayList<MethodInfo>> allMethodMap = generateMethodInfoMapByClassName(allMethodInfo);
+        HashMap<String,ArrayList<MethodInfo>> allMethodMap = generateMethodInfoMapByClassName(allMethodInfo,true);
 
         // read pit results from file
         BufferedReader pitest_reader = new BufferedReader(new FileReader(pitest_filename));

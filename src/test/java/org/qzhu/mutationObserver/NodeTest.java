@@ -1,6 +1,7 @@
 package org.qzhu.mutationObserver;
 
 import org.junit.Test;
+import org.qzhu.mutationObserver.source.Node;
 
 import java.util.List;
 

@@ -2,7 +2,7 @@ package org.qzhu.mutationObserver.callgraph;
 
 import org.apache.bcel.classfile.*;
 import org.apache.bcel.generic.Type;
-import org.qzhu.mutationObserver.MethodInfo;
+import org.qzhu.mutationObserver.source.MethodInfo;
 
 import java.util.ArrayList;
 import java.util.HashMap;

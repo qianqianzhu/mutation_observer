@@ -1,5 +1,7 @@
 package org.qzhu.mutationObserver;
 
+import org.qzhu.mutationObserver.source.MethodInfo;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -20,13 +22,15 @@ class Main {
                "pysonar2-2.1"};
 
        for (String project: projects){
-           analyse(project);
+           analyse(project,true);
        }
+
+//       analyse("commons-lang-LANG_3_7",true);
 
    }
 
 
-   public static void analyse(String project) throws IOException {
+   public static void analyse(String project,boolean is_simple) throws IOException {
        System.out.println("Analysing "+project);
 
        String baseDir = "/Users/qianqianzhu/phd/testability/ast/project/";
@@ -41,7 +45,7 @@ class Main {
        LinkedList<MethodInfo> allMethodInfo = new LinkedList<>();
        for(String fileName: fileNames){
            System.out.println("Processing "+fileName);
-           LinkedList<MethodInfo> methodInfo = Utils.getAllMethodInfoFromSource(fileName);
+           LinkedList<MethodInfo> methodInfo = Utils.getAllMethodInfoFromSource(fileName,is_simple);
            //System.out.println(methodCollector.methodNameCollector);
            //System.out.println(methodCollector.methodSequenceCollector);
            allMethodInfo.addAll(methodInfo);
@@ -58,8 +62,8 @@ class Main {
        Utils.setAllMethodDirectTestFromDir(sourceClassDir,testClassDir,allMethodInfo);
 
        System.out.println("generating feature matrix & write results to file...");
-       String resultFileName = "./src/main/results/"+project+"_all_feature.csv";
-       Utils.generateFeatureMatrix(allMethodInfo,resultFileName);
+       String resultFileName = "./src/main/results/more/"+project+"_all_feature_simple.csv";
+       Utils.generateFeatureMatrix(allMethodInfo,resultFileName,is_simple);
        System.out.println("finished!");
 
    }

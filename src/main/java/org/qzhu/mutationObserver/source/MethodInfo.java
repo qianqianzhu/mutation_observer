@@ -1,4 +1,4 @@
-package org.qzhu.mutationObserver;
+package org.qzhu.mutationObserver.source;
 
 import java.util.ArrayList;
 
@@ -15,6 +15,8 @@ public class MethodInfo {
     public int kill_mut;
     public ArrayList<String> methodModifier;
     public boolean isVoid;
+    public boolean isGetter;   // whether this method is a getter method
+    public boolean isNested;   // whether this method is in a nested class
     public Node<String> methodTreeRoot;
     public ArrayList<String> directTestCases = new ArrayList<>();
 
@@ -25,18 +27,10 @@ public class MethodInfo {
         this.total_mut = 0;
         this.kill_mut = 0;
     }
-    
 
     public void setMethod_sequence(ArrayList<String> method_sequence) {
         this.method_sequence = method_sequence;
     }
 
-    public int getMutationScore(){
-        int mutScore =0;
-        if (total_mut!=0){
-            mutScore = kill_mut/total_mut;
-        }
-        return mutScore;
-    }
 
 }

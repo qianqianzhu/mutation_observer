@@ -1,6 +1,5 @@
-package org.qzhu.mutationObserver;
+package org.qzhu.mutationObserver.source;
 
-import org.antlr.v4.runtime.tree.TerminalNode;
 import org.qzhu.grammar.Java8BaseListener;
 import org.qzhu.grammar.Java8Parser;
 import org.qzhu.grammar.Java8Parser.MethodModifierContext;
@@ -12,7 +11,7 @@ import java.util.List;
 /**
  * @author Qianqian Zhu
  */
-public class MethodInfoVisitor extends Java8BaseListener {
+public  class MethodInfoVisitor extends Java8BaseListener {
     String packageName;
     String className;
     String currentMethodName;
@@ -23,6 +22,7 @@ public class MethodInfoVisitor extends Java8BaseListener {
 
     LinkedList<MethodInfo> methodInfoCollector = new LinkedList<>();
     LinkedList<MethodInfo> allMethodInfoCollector = new LinkedList<>();
+
 
     public LinkedList<MethodInfo> getAllMethodInfoCollector() { return allMethodInfoCollector; }
 
@@ -53,7 +53,24 @@ public class MethodInfoVisitor extends Java8BaseListener {
             int lastDollarIndex = className.lastIndexOf("$");
             className = className.substring(0, lastDollarIndex);
         }
-//        System.out.println(classNestCount);
+    }
+
+    @Override public void enterEnumDeclaration(Java8Parser.EnumDeclarationContext ctx) {
+        classNestCount++;
+        if(classNestCount>1) {
+            className = className+"$"+ctx.Identifier().getText();
+        }else{
+            className = ctx.Identifier().getText();
+
+        }
+    }
+
+    @Override public void exitEnumDeclaration(Java8Parser.EnumDeclarationContext ctx) {
+        classNestCount--;
+        if(classNestCount>0) {
+            int lastDollarIndex = className.lastIndexOf("$");
+            className = className.substring(0, lastDollarIndex);
+        }
     }
 
     @Override
@@ -155,6 +172,7 @@ public class MethodInfoVisitor extends Java8BaseListener {
             methodModifier.add(mmc.getText());
         }
         String methodName = ctx.methodHeader().methodDeclarator().Identifier().getText();
+        Java8Parser.FormalParameterListContext formalParameterList = ctx.methodHeader().methodDeclarator().formalParameterList();
         currentMethodName = packageName+className+":"+methodName;
 
         //currentMethodSequence.clear();
@@ -162,7 +180,10 @@ public class MethodInfoVisitor extends Java8BaseListener {
 //        System.out.println(currentMethodName+" line no.:"+ctx.start.getLine()+"~"+ctx.stop.getLine());
         MethodInfo currentMethod = new MethodInfo(ctx.start.getLine(), ctx.stop.getLine(),currentMethodName);
         currentMethod.isVoid = isVoid;
+        currentMethod.isNested = className.contains("$");
         currentMethod.methodModifier = methodModifier;
+        // getter conditions: public & no arguments & non-void & start with get
+        currentMethod.isGetter = (methodModifier.contains("public") & (formalParameterList==null) & (!isVoid) & methodName.startsWith("get"));
         methodInfoCollector.push(currentMethod);
 //        System.out.println("method no.:"+methodInfoCollector.size());
 
@@ -215,6 +236,8 @@ public class MethodInfoVisitor extends Java8BaseListener {
 //        System.out.println(currentMethodName+" line no.:"+ctx.start.getLine()+"~"+ctx.stop.getLine());
         MethodInfo currentMethod = new MethodInfo(ctx.start.getLine(), ctx.stop.getLine(),currentMethodName);
         currentMethod.isVoid = true;
+        currentMethod.isNested = className.contains("$");
+        currentMethod.isGetter = false;
         ArrayList<String> methodModifier = new ArrayList<>();
         List<Java8Parser.ConstructorModifierContext> modifierContext = ctx.constructorModifier();
         for(Java8Parser.ConstructorModifierContext mmc: modifierContext){
