@@ -18,6 +18,9 @@ import java.util.LinkedList;
 
 import static org.junit.Assert.*;
 
+/**
+ * @author Qianqian Zhu
+ */
 public class MethodInfoVisitorTest {
 
     private LinkedList<MethodInfo> methodWalker(String filename){
@@ -105,5 +108,12 @@ public class MethodInfoVisitorTest {
         MethodInfo testMethod3 = allMethodInfo.get(6);
         assertEquals(testMethod3.method_name,"org.bukkit.ChatColor:getByChar");
         assertFalse(testMethod3.isGetter);
+    }
+
+
+    @Test
+    public void testInterface(){
+        LinkedList<MethodInfo> allMethodInfo = methodWalker("/XYItemRenderer.java");
+        assertEquals(allMethodInfo.size(),0);
     }
 }

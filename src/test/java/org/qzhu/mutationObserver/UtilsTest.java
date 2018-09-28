@@ -57,10 +57,20 @@ public class UtilsTest {
 
     }
 
+    @Test
+    public void testGenerateMethodInfoMapByClassName(){
+        String pitestFileName = "/Users/qianqianzhu/phd/testability/mutation_testing_observability/pitest_result/commons-lang-LANG_3_7_mutations.csv";
+        String fileName = "./src/test/resources/Memoizer.java";
+        LinkedList<MethodInfo> allMethodInfo = getAllMethodInfoFromSource(fileName,false);
+        HashMap<String,ArrayList<MethodInfo>> allMethodInfoMap = generateMethodInfoMapByClassName(allMethodInfo,true);
+        assertEquals(allMethodInfoMap.size(),1);
+        assertTrue(allMethodInfoMap.keySet().contains("org.apache.commons.lang3.concurrent.Memoizer"));
+    }
+
 
     @Test
     public void testParsePitestFile() throws IOException {
-        String pitestFileName = "/Users/qianqianzhu/phd/testability/Observer/pitest_result/commons-lang-LANG_3_7_mutations.csv";
+        String pitestFileName = "/Users/qianqianzhu/phd/testability/mutation_testing_observability/pitest_result/commons-lang-LANG_3_7_mutations.csv";
         String fileName = "./src/test/resources/Memoizer.java";
         LinkedList<MethodInfo> allMethodInfo = getAllMethodInfoFromSource(fileName,false);
 
@@ -181,5 +191,18 @@ public class UtilsTest {
         assertEquals(allMethodInfo.get(3).directTestCases.size(),10);
     }
 
+    @Test
+    public void testGenerateMethodInfoMapByMethodName(){
+        String fileName = "./src/test/resources/Memoizer.java";
+        LinkedList<MethodInfo> allMethodInfo = getAllMethodInfoFromSource(fileName,false);
+        HashMap<String,ArrayList<MethodInfo>> allMethodInfoMap = generateMethodInfoMapByMethodName(allMethodInfo);
+        ArrayList<MethodInfo> testMethodInfos = allMethodInfoMap.get("org.apache.commons.lang3.concurrent.Memoizer:<init>");
+        assertEquals(testMethodInfos.size(),2);
+        int methodLength0 = testMethodInfos.get(0).stop_line-testMethodInfos.get(0).start_line+1;
+        int methodLength1 = testMethodInfos.get(1).stop_line-testMethodInfos.get(1).start_line+1;
+        assertTrue(methodLength0<=methodLength1);
+
+
+    }
 
 }

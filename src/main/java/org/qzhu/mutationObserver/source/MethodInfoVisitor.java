@@ -178,7 +178,7 @@ public  class MethodInfoVisitor extends Java8BaseListener {
         //currentMethodSequence.clear();
         //System.out.println(currentMethodName);
 //        System.out.println(currentMethodName+" line no.:"+ctx.start.getLine()+"~"+ctx.stop.getLine());
-        MethodInfo currentMethod = new MethodInfo(ctx.start.getLine(), ctx.stop.getLine(),currentMethodName);
+        MethodInfo currentMethod = new MethodInfo(ctx.start.getLine(), ctx.stop.getLine(),packageName+className,currentMethodName);
         currentMethod.isVoid = isVoid;
         currentMethod.isNested = className.contains("$");
         currentMethod.methodModifier = methodModifier;
@@ -234,7 +234,7 @@ public  class MethodInfoVisitor extends Java8BaseListener {
         // collect new method info
         currentMethodName = packageName+className+":<init>";
 //        System.out.println(currentMethodName+" line no.:"+ctx.start.getLine()+"~"+ctx.stop.getLine());
-        MethodInfo currentMethod = new MethodInfo(ctx.start.getLine(), ctx.stop.getLine(),currentMethodName);
+        MethodInfo currentMethod = new MethodInfo(ctx.start.getLine(), ctx.stop.getLine(),packageName+className,currentMethodName);
         currentMethod.isVoid = true;
         currentMethod.isNested = className.contains("$");
         currentMethod.isGetter = false;

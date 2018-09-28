@@ -1,5 +1,8 @@
 package org.qzhu.mutationObserver.source;
 
+/**
+ * @author Qianqian Zhu
+ */
 public class ClassInfo {
 
      public int voidMethodNo;

@@ -224,7 +224,7 @@ public class Utils {
         return LCSMatrix;
     }
 
-    private static List<Node<String>> generateSearchPatterns(){
+    public static List<Node<String>> generateSearchPatterns(){
         List<Node<String>> searchPatterns = new LinkedList<>();
         String[] statements = {"if","if-else","while","for","do"};
         for(int i=0;i<statements.length;i++) {
@@ -240,7 +240,7 @@ public class Utils {
         return searchPatterns;
     }
 
-    private static List<Node<String>> generateSimpleSearchPatterns(){
+    public static List<Node<String>> generateSimpleSearchPatterns(){
         List<Node<String>> searchPatterns = new LinkedList<>();
         String[] statements = {"cond","loop"};
         for(int i=0;i<statements.length;i++) {
@@ -256,7 +256,7 @@ public class Utils {
         return searchPatterns;
     }
 
-    private static Map<String,ClassInfo> sumMethodInfoByClassName(LinkedList<MethodInfo> allMethodInfo){
+    public static Map<String,ClassInfo> sumMethodInfoByClassName(LinkedList<MethodInfo> allMethodInfo){
         Map<String,ClassInfo> methodInfoSum = new HashMap<>();
         HashMap<String,ArrayList<MethodInfo>> allMethodInfoMap = generateMethodInfoMapByClassName(allMethodInfo,false);
         for (String className:allMethodInfoMap.keySet()){
@@ -306,9 +306,7 @@ public class Utils {
             MethodInfo thisMethod = allMethodInfo.get(mid);
             String treeString2 = "";
             treeString2 = thisMethod.methodTreeRoot.toString(treeString2);
-            String methodName = thisMethod.method_name;
-            String str[] = methodName.split(":");
-            String className = str[0];
+            String className = thisMethod.className;
             writer.write(thisMethod.method_name+";"
                     +thisMethod.methodModifier.contains("public")+";"
                     +thisMethod.methodModifier.contains("static")+";"
@@ -342,9 +340,7 @@ public class Utils {
         // create methods map for mutation score: key-className(with/without nested class), without for matching source code and bytecode
         HashMap<String,ArrayList<MethodInfo>> allMethodInfoMapByClassName = new HashMap<>();
         for(MethodInfo method: allMethodInfo){
-            String methodName = method.method_name;
-            String[] nameInfos = methodName.split(":");
-            String className =nameInfos[0];
+            String className = method.className;
             String key = className;
             if(withoutNestedClass && className.indexOf("$")!=-1){
                 key = className.substring(0,className.indexOf("$"));
@@ -359,6 +355,43 @@ public class Utils {
             allMethodInfoMapByClassName.put(key,methodInfos);
         }
         return allMethodInfoMapByClassName;
+    }
+
+    public static HashMap<String,ArrayList<MethodInfo>> generateMethodInfoMapByMethodName(LinkedList<MethodInfo> allMethodInfo){
+        // create methods map for matching Jhawk metrics
+        HashMap<String,ArrayList<MethodInfo>> allMethodInfoMapByMethodName = new HashMap<>();
+        for(MethodInfo method: allMethodInfo){
+            String methodName = method.method_name;
+            ArrayList<MethodInfo> methodInfos;
+            if(!allMethodInfoMapByMethodName.containsKey(methodName)){
+                methodInfos = new ArrayList<>();
+            }else{
+                methodInfos = allMethodInfoMapByMethodName.get(methodName);
+            }
+            methodInfos.add(method);
+            allMethodInfoMapByMethodName.put(methodName,methodInfos);
+        }
+
+        // sort methodInfo by method length: ascending
+        for(String methodName:allMethodInfoMapByMethodName.keySet()){
+            ArrayList<MethodInfo> methodInfos = allMethodInfoMapByMethodName.get(methodName);
+            Collections.sort(methodInfos, new Comparator<MethodInfo>() {
+                @Override
+                public int compare(MethodInfo lhs, MethodInfo rhs) {
+                    int lhsMethodLength = lhs.stop_line-lhs.start_line+1;
+                    int rhsMethodLength = rhs.stop_line-rhs.start_line+1;
+
+                    if(lhsMethodLength==rhsMethodLength)
+                        return 0;
+                    else if(lhsMethodLength>rhsMethodLength)
+                        return 1;
+                    else
+                        return -1;
+                }
+            });
+        }
+
+        return allMethodInfoMapByMethodName;
     }
 
 
@@ -399,6 +432,7 @@ public class Utils {
             int lineNo = Integer.parseInt(columns[4].trim());
             // iterate method map
             if(allMethodMap.containsKey(classNameWithoutNest)){
+//                System.out.println(classNameWithoutNest);
                 // match method name
                 ArrayList<MethodInfo> methodInfos = allMethodMap.get(classNameWithoutNest);
                 for(MethodInfo method: methodInfos){
