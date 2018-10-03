@@ -59,7 +59,6 @@ public class UtilsTest {
 
     @Test
     public void testGenerateMethodInfoMapByClassName(){
-        String pitestFileName = "/Users/qianqianzhu/phd/testability/mutation_testing_observability/pitest_result/commons-lang-LANG_3_7_mutations.csv";
         String fileName = "./src/test/resources/Memoizer.java";
         LinkedList<MethodInfo> allMethodInfo = getAllMethodInfoFromSource(fileName,false);
         HashMap<String,ArrayList<MethodInfo>> allMethodInfoMap = generateMethodInfoMapByClassName(allMethodInfo,true);
@@ -184,11 +183,35 @@ public class UtilsTest {
         LinkedList<MethodInfo> allMethodInfo = getAllMethodInfoFromSource(fileName,false);
         setAllMethodDirectTestFromDir(sourceDir,testDir,allMethodInfo);
 
-        assertEquals(allMethodInfo.get(0).bytecodeName,"org.apache.commons.lang3.concurrent.Memoizer:<init>(org.apache.commons.lang3.concurrent.Computable)");
-        assertEquals(allMethodInfo.get(0).directTestCases.size(),4);
+        assertEquals("org.apache.commons.lang3.concurrent.Memoizer:<init>(org.apache.commons.lang3.concurrent.Computable)",
+                allMethodInfo.get(0).bytecodeName);
+        assertEquals(4,allMethodInfo.get(0).directTestCases.size());
 
-        assertEquals(allMethodInfo.get(3).bytecodeName,"org.apache.commons.lang3.concurrent.Memoizer:compute(java.lang.Object)");
-        assertEquals(allMethodInfo.get(3).directTestCases.size(),10);
+        assertEquals("org.apache.commons.lang3.concurrent.Memoizer:compute(java.lang.Object)",
+                allMethodInfo.get(3).bytecodeName);
+        assertEquals(10,allMethodInfo.get(3).directTestCases.size());
+
+//        for (MethodInfo method:allMethodInfo){
+//            System.out.println(method.bytecodeName+" "+method.directTestCases.size()+" "+method.testReachDistance);
+//        }
+    }
+
+    @Test
+    public void testSetTestReachDistance(){
+        String sourceDir = "/Users/qianqianzhu/phd/testability/ast/project/commons-lang-LANG_3_7/target/classes";
+        String testDir = "/Users/qianqianzhu/phd/testability/ast/project/commons-lang-LANG_3_7/target/test-classes";
+
+        String fileName = "./src/test/resources/TypeUtils.java";
+        LinkedList<MethodInfo> allMethodInfo = getAllMethodInfoFromSource(fileName,true);
+        setAllMethodDirectTestFromDir(sourceDir,testDir,allMethodInfo);
+
+        for (MethodInfo method:allMethodInfo){
+            if(method.directTestCases.size()==0)
+                assertTrue(method.testReachDistance>0);
+            if(method.directTestCases.size()>0) {
+                assertEquals(0, method.testReachDistance);
+            }
+        }
     }
 
     @Test

@@ -5,13 +5,13 @@ import org.apache.bcel.generic.*;
 import org.qzhu.mutationObserver.source.MethodInfo;
 
 import java.util.HashMap;
-
+import java.util.HashSet;
 
 /**
  * @author Qianqian Zhu
  * Class copied with modifications from java-callgraph: https://github.com/gousiosg/java-callgraph
  */
-public class MethodVisitor extends EmptyVisitor {
+public class MethodCallVisitor extends EmptyVisitor {
 
     JavaClass visitedClass;
     private MethodGen mg;
@@ -19,11 +19,18 @@ public class MethodVisitor extends EmptyVisitor {
 //    private String format;
     private String testCaseName;
     private HashMap<String,MethodInfo> allMethodInfoMapByMethodByteName;
+    HashSet<String> testSuite;
+    Digraph<String> callGraph;
+    boolean directTestFlag;
 
-    public MethodVisitor(MethodGen m, JavaClass jc, HashMap<String,MethodInfo> allMethodInfoMapByMethodByteName) {
+    public MethodCallVisitor(MethodGen m, JavaClass jc, HashMap<String,MethodInfo> allMethodInfoMapByMethodByteName,
+                             boolean directTestFlag, Digraph<String> callGraph,HashSet<String> testSuite) {
         visitedClass = jc;
         mg = m;
         cp = mg.getConstantPool();
+        this.directTestFlag = directTestFlag;
+        this.callGraph = callGraph;
+        this.testSuite = testSuite;
         this.allMethodInfoMapByMethodByteName = allMethodInfoMapByMethodByteName;
         testCaseName = visitedClass.getClassName() + ":" + mg.getName() +"(" + argumentList(mg.getArgumentTypes()) + ")";
 //        format = "M:" + visitedClass.getClassName() + ":" + mg.getName() +"(" + argumentList(mg.getArgumentTypes()) + ")"
@@ -62,11 +69,15 @@ public class MethodVisitor extends EmptyVisitor {
 
     private void setDirectTestCases(InvokeInstruction i){
         String invokeMethodName = i.getReferenceType(cp)+":"+i.getMethodName(cp)+"("+argumentList(i.getArgumentTypes(cp))+")";
-        if(allMethodInfoMapByMethodByteName.containsKey(invokeMethodName)){
+        if(directTestFlag) {
+            if (allMethodInfoMapByMethodByteName.containsKey(invokeMethodName)) {
 //            System.out.println(invokeMethodName);
-            MethodInfo methodInfo = allMethodInfoMapByMethodByteName.get(invokeMethodName);
-            methodInfo.directTestCases.add(testCaseName);
+                MethodInfo methodInfo = allMethodInfoMapByMethodByteName.get(invokeMethodName);
+                methodInfo.directTestCases.add(testCaseName);
+            }
+            testSuite.add(testCaseName);
         }
+        callGraph.add(testCaseName,invokeMethodName);
     }
 
     @Override

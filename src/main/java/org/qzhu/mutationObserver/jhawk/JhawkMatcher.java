@@ -18,7 +18,7 @@ import static org.qzhu.mutationObserver.Utils.sumMethodInfoByClassName;
 public class JhawkMatcher {
 
     public static void main(String args[]) throws IOException {
-        String project = "jfreechart-1.5.0";
+        String project = "pysonar2-2.1";
         gatherJhawkData(project);
     }
 

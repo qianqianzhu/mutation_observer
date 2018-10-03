@@ -10,7 +10,8 @@ import org.apache.bcel.classfile.ClassParser;
 import org.qzhu.grammar.Java8Lexer;
 import org.qzhu.grammar.Java8Parser;
 import org.qzhu.mutationObserver.callgraph.ClassVisitor;
-import org.qzhu.mutationObserver.callgraph.SourceMethodsIndexer;
+import org.qzhu.mutationObserver.callgraph.Digraph;
+import org.qzhu.mutationObserver.source.SourceMethodsIndexer;
 import org.qzhu.mutationObserver.source.*;
 
 import java.io.*;
@@ -145,7 +146,9 @@ public class Utils {
                 cp = new ClassParser(testJarFileName,entry.getName());
                 HashMap<String,MethodInfo> allMethodInfoMap = generateMethodInfoMapByMethodByteName(sourceJarFileName,allMethodInfo);
 //                System.out.println(allMethodInfo.size());
-                ClassVisitor classVisitor = new ClassVisitor(cp.parse(),allMethodInfoMap);
+                HashSet<String> testSuite = new HashSet<>();
+                Digraph<String> callGraph = new Digraph<>();
+                ClassVisitor classVisitor = new ClassVisitor(cp.parse(),allMethodInfoMap,true,callGraph,testSuite);
                 classVisitor.start();
             }
 
@@ -156,21 +159,137 @@ public class Utils {
     }
 
 
-    public static void setAllMethodDirectTestFromDir(String sourceDir, String testDir, LinkedList<MethodInfo> allMethodInfo){
+    public static void setAllMethodDirectTestFromDir0(String sourceDir, String testDir, LinkedList<MethodInfo> allMethodInfo){
         try {
             List<String> fileNames = new ArrayList<>();
             fileNames = Utils.getAllFilesFromDir(fileNames,".class",testDir);
+            HashSet<String> testSuite = new HashSet<>();
+            Digraph<String> callGraph = new Digraph<>();
             for(String filename: fileNames) {
                 ClassParser cp =new ClassParser(filename);
                 HashMap<String,MethodInfo> allMethodInfoMap = generateMethodInfoMapByMethodByteName(sourceDir,allMethodInfo);
-                ClassVisitor classVisitor = new ClassVisitor(cp.parse(),allMethodInfoMap);
+                ClassVisitor classVisitor = new ClassVisitor(cp.parse(),allMethodInfoMap,true,callGraph,testSuite);
                 classVisitor.start();
             }
+
+            System.out.println(testSuite.size());
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
+    public static void setAllMethodDirectTestFromDir(String sourceDir, String testDir, LinkedList<MethodInfo> allMethodInfo){
+        try {
+            // parse test files (.class)
+            List<String> testFileNames = new ArrayList<>();
+            testFileNames = Utils.getAllFilesFromDir(testFileNames,".class",testDir);
+            HashSet<String> testSuite = new HashSet<>();
+            Digraph<String> callGraph = new Digraph<>();
+
+            HashMap<String,MethodInfo> allMethodInfoMap = generateMethodInfoMapByMethodByteName(sourceDir,allMethodInfo);
+            for(String filename: testFileNames) {
+                ClassParser cp =new ClassParser(filename);
+
+                ClassVisitor classVisitor = new ClassVisitor(cp.parse(),allMethodInfoMap,true,callGraph,testSuite);
+                classVisitor.start();
+            }
+//            System.out.println(testSuite.size());
+//            System.out.println(callGraph.getNumberOfVertex());
+            // parse source files (.class) to complete call graph
+            List<String> sourceFileNames = new ArrayList<>();
+            sourceFileNames = Utils.getAllFilesFromDir(sourceFileNames,".class",sourceDir);
+            for(String filename: sourceFileNames) {
+                ClassParser cp =new ClassParser(filename);
+                ClassVisitor classVisitor = new ClassVisitor(cp.parse(),allMethodInfoMap,false,callGraph,testSuite);
+                classVisitor.start();
+            }
+//            System.out.println(testSuite.size());
+//            System.out.println(callGraph.getNumberOfVertex());
+
+            setTestReachDistance(callGraph,testSuite,allMethodInfoMap);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    public static void setNextLayer(String targetMethod,Digraph<String> callgraph,HashMap<String,Integer> allMethodTestReachDistance){
+        // base case
+        // all method distance is set
+        if(!allMethodTestReachDistance.values().contains(1024))
+            return;
+        // no outbound neighbors
+        if(callgraph.outboundNeighbors(targetMethod).size()==0) {
+//            System.out.println(targetMethod+" base 1");
+            return;
+        }
+        // all outbound neighbors' distances are set
+        boolean allDistanceSet = true;
+        for (String outer:callgraph.outboundNeighbors(targetMethod)){
+            if (allMethodTestReachDistance.get(outer)==1024){
+                allDistanceSet = false;
+                break;
+            }
+        }
+        if (allDistanceSet){
+//            System.out.println(targetMethod+" base 2");
+            return;
+        }
+
+//        System.out.println(targetMethod+" "+allMethodTestReachDistance.get(targetMethod)+" "
+//                +callgraph.outboundNeighbors(targetMethod).size()+" "+allDistanceSet);
+        // recursion
+        for (String outer:callgraph.outboundNeighbors(targetMethod)){
+            int currentTestDistance = allMethodTestReachDistance.get(outer);
+            int previousTestReachDistance = allMethodTestReachDistance.get(targetMethod);
+            currentTestDistance = Math.min(previousTestReachDistance+1,currentTestDistance);
+            allMethodTestReachDistance.put(outer,currentTestDistance);
+            // avoid cyclic loop
+            if(currentTestDistance>previousTestReachDistance) {
+                setNextLayer(outer, callgraph, allMethodTestReachDistance);
+            }else{
+                return;
+            }
+
+        }
+
+
+    }
+
+    public static void setTestReachDistance(Digraph<String> callgraph,HashSet<String> testSuite,HashMap<String,MethodInfo> allMethodInfoMap){
+        // initialise vertex distance map: key-method byte code name
+        HashMap<String,Integer> allMethodTestReachDistance = new HashMap<>();
+        for (String methodName: callgraph.getAllVertex()){
+            if(!testSuite.contains(methodName)) {
+                allMethodTestReachDistance.put(methodName, 1024);
+            }
+            else{
+                allMethodTestReachDistance.put(methodName,0);
+            }
+        }
+
+        for (String test:testSuite){
+            // set first layer
+            List<String> outboundNeighbors = callgraph.outboundNeighbors(test);
+            for(String outbounder: outboundNeighbors) {
+                allMethodTestReachDistance.put(outbounder, 0);
+                // set next layer
+                List<String> nextOutboundNeighbors = callgraph.outboundNeighbors(outbounder);
+                for (String nextOutbounder: nextOutboundNeighbors) {
+                    setNextLayer(nextOutbounder,callgraph,allMethodTestReachDistance);
+                }
+            }
+        }
+
+        // update methodInfo
+        for(String methodName:allMethodTestReachDistance.keySet()){
+            MethodInfo method = allMethodInfoMap.get(methodName);
+            int distance = allMethodTestReachDistance.get(methodName);
+            if (method!=null && distance!=1024){
+                method.testReachDistance = distance;
+            }
+        }
+    }
 
     public static int lcs(ArrayList<String> a, ArrayList<String> b){
         int aLen = a.size();
@@ -291,7 +410,7 @@ public class Utils {
             searchPatterns= generateSimpleSearchPatterns();
         }
         // file header
-        writer.write("method_name;is_public;is_static;is_void;is_nested;method_length;kill_mut;total_mut;nested_depth;direct_test_no;void_no;getter_no;total_method_no;method_sequence");
+        writer.write("method_name;is_public;is_static;is_void;is_nested;method_length;kill_mut;total_mut;nested_depth;direct_test_no;test_distance;void_no;getter_no;total_method_no;method_sequence");
         for(int pid=0;pid<searchPatterns.size();pid++){
             String treeString = "";
             treeString = searchPatterns.get(pid).toString(treeString);
@@ -317,6 +436,7 @@ public class Utils {
                     +thisMethod.total_mut+";"
                     +(thisMethod.methodTreeRoot.maxDepth()-1)+";"
                     +thisMethod.directTestCases.size()+";"
+                    +thisMethod.testReachDistance+";"
                     +classInfoMap.get(className).voidMethodNo+";"
                     +classInfoMap.get(className).getterMethodNo+";"
                     +classInfoMap.get(className).totalMethodNo+";"

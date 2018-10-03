@@ -1,4 +1,4 @@
-package org.qzhu.mutationObserver;
+package org.qzhu.mutationObserver.source;
 
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
@@ -9,8 +9,6 @@ import org.antlr.v4.runtime.tree.ParseTreeWalker;
 import org.junit.Test;
 import org.qzhu.grammar.Java8Lexer;
 import org.qzhu.grammar.Java8Parser;
-import org.qzhu.mutationObserver.source.MethodInfo;
-import org.qzhu.mutationObserver.source.MethodInfoVisitor;
 
 import java.io.IOException;
 import java.io.InputStream;

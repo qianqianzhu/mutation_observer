@@ -1,4 +1,4 @@
-package org.qzhu.mutationObserver;
+package org.qzhu.mutationObserver.source;
 
 import org.junit.Test;
 import org.qzhu.mutationObserver.source.Node;

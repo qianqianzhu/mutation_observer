@@ -6,6 +6,7 @@ import org.apache.bcel.generic.MethodGen;
 import org.qzhu.mutationObserver.source.MethodInfo;
 
 import java.util.HashMap;
+import java.util.HashSet;
 
 /**
  * @author Qianqian Zhu
@@ -16,13 +17,24 @@ public class ClassVisitor extends EmptyVisitor {
     private JavaClass clazz;
     private ConstantPoolGen constants;
     private HashMap<String,MethodInfo> allMethodInfoMapByMethodByteName;
+    boolean directTestFlag;
+    Digraph<String> callGraph;
+    HashSet<String> testSuite;
 //    private String classReferenceFormat;
 
-    public ClassVisitor(JavaClass jc, HashMap<String,MethodInfo> allMethodInfoMapByMethodByteName) {
+    public ClassVisitor(JavaClass jc, HashMap<String,MethodInfo> allMethodInfoMapByMethodByteName,
+                        boolean directTestFlag, Digraph<String> callGraph,HashSet<String> testSuite) {
         clazz = jc;
+        this.directTestFlag = directTestFlag;
+        this.callGraph = callGraph;
+        this.testSuite = testSuite;
         constants = new ConstantPoolGen(clazz.getConstantPool());
         this.allMethodInfoMapByMethodByteName = allMethodInfoMapByMethodByteName;
 //        classReferenceFormat = "C:" + clazz.getClassName() + " %s";
+    }
+
+    public Digraph<String> getCallGraph(){
+        return callGraph;
     }
 
     public void visitJavaClass(JavaClass jc) {
@@ -48,7 +60,8 @@ public class ClassVisitor extends EmptyVisitor {
 
     public void visitMethod(Method method) {
         MethodGen mg = new MethodGen(method, clazz.getClassName(), constants);
-        MethodVisitor visitor = new MethodVisitor(mg, clazz, allMethodInfoMapByMethodByteName);
+        MethodCallVisitor visitor = new MethodCallVisitor(mg,clazz,allMethodInfoMapByMethodByteName,
+                directTestFlag,callGraph,testSuite);
         visitor.start(); 
     }
 

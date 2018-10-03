@@ -25,7 +25,7 @@ class Main {
            analyse(project,true);
        }
 
-//       analyse("commons-lang-LANG_3_7",true);
+//       analyse("java-apns-apns-0.2.3",true);
 
    }
 
@@ -62,7 +62,7 @@ class Main {
        Utils.setAllMethodDirectTestFromDir(sourceClassDir,testClassDir,allMethodInfo);
 
        System.out.println("generating feature matrix & write results to file...");
-       String resultFileName = "./src/main/results/more/"+project+"_all_feature_simple.csv";
+       String resultFileName = "./src/main/results/more2/"+project+"_all_feature_simple.csv";
        Utils.generateFeatureMatrix(allMethodInfo,resultFileName,is_simple);
        System.out.println("finished!");
 
