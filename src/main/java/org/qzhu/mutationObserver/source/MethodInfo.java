@@ -20,7 +20,7 @@ public class MethodInfo {
     public boolean isNested;   // whether this method is in a nested class
     public Node<String> methodTreeRoot;
     public ArrayList<String> directTestCases = new ArrayList<>();
-    public int testReachDistance = 1024;
+    public int testReachDistance = Integer.MAX_VALUE;
 
     public MethodInfo(int start_line, int stop_line, String className,String method_name) {
         this.start_line = start_line;

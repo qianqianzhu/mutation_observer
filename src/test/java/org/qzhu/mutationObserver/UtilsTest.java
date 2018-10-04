@@ -1,6 +1,9 @@
 package org.qzhu.mutationObserver;
 
+import org.apache.bcel.classfile.ClassParser;
 import org.junit.Test;
+import org.qzhu.mutationObserver.callgraph.ClassVisitor;
+import org.qzhu.mutationObserver.callgraph.Digraph;
 import org.qzhu.mutationObserver.source.MethodInfo;
 
 import java.io.IOException;
@@ -8,7 +11,6 @@ import java.util.*;
 
 import static org.junit.Assert.*;
 import static org.qzhu.mutationObserver.Utils.*;
-import static org.qzhu.mutationObserver.Utils.setAllMethodDirectTestFromJar;
 
 /**
  * @author Qianqian Zhu
@@ -147,10 +149,11 @@ public class UtilsTest {
 
         LinkedList<MethodInfo> allMethodInfo = getAllMethodInfoFromSource(fileName,false);
         HashMap<String,MethodInfo> allMethodInfoMap = generateMethodInfoMapByMethodByteName(sourceJarFileName,allMethodInfo);
-        assertEquals(allMethodInfoMap.get("org.apache.commons.lang3.concurrent.Memoizer$1:call()").method_name,
-                "org.apache.commons.lang3.concurrent.Memoizer$Callable:call");
-        assertEquals(allMethodInfoMap.get("org.apache.commons.lang3.concurrent.Memoizer:<init>(org.apache.commons.lang3.concurrent.Computable)").method_name,
-                "org.apache.commons.lang3.concurrent.Memoizer:<init>");
+        assertEquals("org.apache.commons.lang3.concurrent.Memoizer$Callable:call",
+                allMethodInfoMap.get("org.apache.commons.lang3.concurrent.Memoizer$1:call()").method_name);
+        assertEquals("org.apache.commons.lang3.concurrent.Memoizer:<init>",
+                allMethodInfoMap.get("org.apache.commons.lang3.concurrent.Memoizer:<init>(org.apache.commons.lang3.concurrent.Computable)").method_name
+                );
 
     }
 
@@ -163,11 +166,11 @@ public class UtilsTest {
         LinkedList<MethodInfo> allMethodInfo = getAllMethodInfoFromSource(fileName,false);
         setAllMethodDirectTestFromJar(sourceJarFileName,testJarFileName,allMethodInfo);
 
-        assertEquals(allMethodInfo.get(0).bytecodeName,"org.apache.commons.lang3.concurrent.Memoizer:<init>(org.apache.commons.lang3.concurrent.Computable)");
-        assertEquals(allMethodInfo.get(0).directTestCases.size(),4);
+        assertEquals("org.apache.commons.lang3.concurrent.Memoizer:<init>(org.apache.commons.lang3.concurrent.Computable)",allMethodInfo.get(0).bytecodeName);
+        assertEquals(4,allMethodInfo.get(0).directTestCases.size());
 
-        assertEquals(allMethodInfo.get(3).bytecodeName,"org.apache.commons.lang3.concurrent.Memoizer:compute(java.lang.Object)");
-        assertEquals(allMethodInfo.get(3).directTestCases.size(),10);
+        assertEquals("org.apache.commons.lang3.concurrent.Memoizer:compute(java.lang.Object)",allMethodInfo.get(3).bytecodeName);
+        assertEquals(10,allMethodInfo.get(3).directTestCases.size());
 
         //        for (MethodInfo method:allMethodInfo){
 //            System.out.println(method.bytecodeName+" ; "+method.directTestCases.toString());
@@ -196,10 +199,45 @@ public class UtilsTest {
 //        }
     }
 
+
     @Test
-    public void testSetTestReachDistance(){
-        String sourceDir = "/Users/qianqianzhu/phd/testability/ast/project/commons-lang-LANG_3_7/target/classes";
-        String testDir = "/Users/qianqianzhu/phd/testability/ast/project/commons-lang-LANG_3_7/target/test-classes";
+    public void testSetTestReachDistance() {
+        String sourceDir = "./src/test/resources/testProject/classes";
+        String testDir = "./src/test/resources/testProject/test-classes";
+
+        String fileName = "./src/test/resources/testProject/A.java";
+        LinkedList<MethodInfo> allMethodInfo = getAllMethodInfoFromSource(fileName,true);
+
+        HashMap<String,Integer> allMethodTestReachDistance = setAllMethodDirectTestFromDir(sourceDir,testDir,allMethodInfo);
+        HashMap<String,Integer> expected = new HashMap<>();
+
+        expected.put("java.lang.Object:<init>()",1);
+
+        expected.put("org.testproject.A:<init>()",1);
+        expected.put("org.testproject.A:methodA()",1);
+        expected.put("org.testproject.A:methodB()",2);
+        expected.put("org.testproject.A:methodC()",2);
+        expected.put("org.testproject.A:methodD()",1);
+        expected.put("org.testproject.A:methodE()",3);
+
+        expected.put("org.testproject.ATest:<init>()",0);
+        expected.put("org.testproject.ATest:testA()",0);
+        expected.put("org.testproject.ATest:testB()",0);
+        expected.put("org.testproject.ATest:testD()",0);
+        expected.put("org.testproject.ATest:testC()",0);
+
+        expected.put("START",-1);
+
+        for (String methodName: allMethodTestReachDistance.keySet()){
+//            System.out.println(methodName+" "+allMethodTestReachDistance.get(methodName));
+            assertEquals(expected.get(methodName),allMethodTestReachDistance.get(methodName));
+        }
+    }
+
+    @Test
+    public void testSetTestReachDistanceLargeClass(){
+        String sourceDir = "./src/test/resources/testProject/classes";
+        String testDir = "./src/test/resources/testProject/test-classes";
 
         String fileName = "./src/test/resources/TypeUtils.java";
         LinkedList<MethodInfo> allMethodInfo = getAllMethodInfoFromSource(fileName,true);
@@ -209,7 +247,7 @@ public class UtilsTest {
             if(method.directTestCases.size()==0)
                 assertTrue(method.testReachDistance>0);
             if(method.directTestCases.size()>0) {
-                assertEquals(0, method.testReachDistance);
+                assertEquals(1, method.testReachDistance);
             }
         }
     }

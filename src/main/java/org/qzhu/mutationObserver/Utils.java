@@ -178,7 +178,7 @@ public class Utils {
         }
     }
 
-    public static void setAllMethodDirectTestFromDir(String sourceDir, String testDir, LinkedList<MethodInfo> allMethodInfo){
+    public static HashMap<String,Integer> setAllMethodDirectTestFromDir(String sourceDir, String testDir, LinkedList<MethodInfo> allMethodInfo){
         try {
             // parse test files (.class)
             List<String> testFileNames = new ArrayList<>();
@@ -193,8 +193,7 @@ public class Utils {
                 ClassVisitor classVisitor = new ClassVisitor(cp.parse(),allMethodInfoMap,true,callGraph,testSuite);
                 classVisitor.start();
             }
-//            System.out.println(testSuite.size());
-//            System.out.println(callGraph.getNumberOfVertex());
+
             // parse source files (.class) to complete call graph
             List<String> sourceFileNames = new ArrayList<>();
             sourceFileNames = Utils.getAllFilesFromDir(sourceFileNames,".class",sourceDir);
@@ -203,91 +202,29 @@ public class Utils {
                 ClassVisitor classVisitor = new ClassVisitor(cp.parse(),allMethodInfoMap,false,callGraph,testSuite);
                 classVisitor.start();
             }
-//            System.out.println(testSuite.size());
-//            System.out.println(callGraph.getNumberOfVertex());
 
-            setTestReachDistance(callGraph,testSuite,allMethodInfoMap);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-
-    public static void setNextLayer(String targetMethod,Digraph<String> callgraph,HashMap<String,Integer> allMethodTestReachDistance){
-        // base case
-        // all method distance is set
-        if(!allMethodTestReachDistance.values().contains(1024))
-            return;
-        // no outbound neighbors
-        if(callgraph.outboundNeighbors(targetMethod).size()==0) {
-//            System.out.println(targetMethod+" base 1");
-            return;
-        }
-        // all outbound neighbors' distances are set
-        boolean allDistanceSet = true;
-        for (String outer:callgraph.outboundNeighbors(targetMethod)){
-            if (allMethodTestReachDistance.get(outer)==1024){
-                allDistanceSet = false;
-                break;
-            }
-        }
-        if (allDistanceSet){
-//            System.out.println(targetMethod+" base 2");
-            return;
-        }
-
-//        System.out.println(targetMethod+" "+allMethodTestReachDistance.get(targetMethod)+" "
-//                +callgraph.outboundNeighbors(targetMethod).size()+" "+allDistanceSet);
-        // recursion
-        for (String outer:callgraph.outboundNeighbors(targetMethod)){
-            int currentTestDistance = allMethodTestReachDistance.get(outer);
-            int previousTestReachDistance = allMethodTestReachDistance.get(targetMethod);
-            currentTestDistance = Math.min(previousTestReachDistance+1,currentTestDistance);
-            allMethodTestReachDistance.put(outer,currentTestDistance);
-            // avoid cyclic loop
-            if(currentTestDistance>previousTestReachDistance) {
-                setNextLayer(outer, callgraph, allMethodTestReachDistance);
-            }else{
-                return;
+            // add virtual starting point to simply shortest path problem
+            for(String test:testSuite){
+                callGraph.add("START",test);
             }
 
-        }
+            // compute shortest path by BFS
+            HashMap<String,Integer> allMethodTestReachDistance = callGraph.shortestDistanceBFS("START");
 
-
-    }
-
-    public static void setTestReachDistance(Digraph<String> callgraph,HashSet<String> testSuite,HashMap<String,MethodInfo> allMethodInfoMap){
-        // initialise vertex distance map: key-method byte code name
-        HashMap<String,Integer> allMethodTestReachDistance = new HashMap<>();
-        for (String methodName: callgraph.getAllVertex()){
-            if(!testSuite.contains(methodName)) {
-                allMethodTestReachDistance.put(methodName, 1024);
-            }
-            else{
-                allMethodTestReachDistance.put(methodName,0);
-            }
-        }
-
-        for (String test:testSuite){
-            // set first layer
-            List<String> outboundNeighbors = callgraph.outboundNeighbors(test);
-            for(String outbounder: outboundNeighbors) {
-                allMethodTestReachDistance.put(outbounder, 0);
-                // set next layer
-                List<String> nextOutboundNeighbors = callgraph.outboundNeighbors(outbounder);
-                for (String nextOutbounder: nextOutboundNeighbors) {
-                    setNextLayer(nextOutbounder,callgraph,allMethodTestReachDistance);
+            // update methodInfo
+            for(String methodName:allMethodTestReachDistance.keySet()){
+                MethodInfo method = allMethodInfoMap.get(methodName);
+                int distance = allMethodTestReachDistance.get(methodName);
+                if (method!=null){
+                    method.testReachDistance = distance;
                 }
             }
-        }
 
-        // update methodInfo
-        for(String methodName:allMethodTestReachDistance.keySet()){
-            MethodInfo method = allMethodInfoMap.get(methodName);
-            int distance = allMethodTestReachDistance.get(methodName);
-            if (method!=null && distance!=1024){
-                method.testReachDistance = distance;
-            }
+            return allMethodTestReachDistance;
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
         }
     }
 

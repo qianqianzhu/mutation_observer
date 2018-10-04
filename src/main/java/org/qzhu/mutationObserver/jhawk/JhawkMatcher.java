@@ -18,8 +18,21 @@ import static org.qzhu.mutationObserver.Utils.sumMethodInfoByClassName;
 public class JhawkMatcher {
 
     public static void main(String args[]) throws IOException {
-        String project = "pysonar2-2.1";
-        gatherJhawkData(project);
+
+        String []  projects = {
+                "Bukkit-1.7.9-R0.2",
+                "commons-lang-LANG_3_7",
+                "commons-math-MATH_3_6_1",
+                "java-apns-apns-0.2.3",
+                "jfreechart-1.5.0",
+                "pysonar2-2.1"};
+
+        for (String project: projects){
+            gatherJhawkData(project);
+        }
+
+//        String project = "pysonar2-2.1";
+//        gatherJhawkData(project);
     }
 
     public static void gatherJhawkData(String project) throws IOException {
@@ -133,8 +146,8 @@ public class JhawkMatcher {
         List<Node<String>> searchPatterns;
         searchPatterns= generateSimpleSearchPatterns();
         writer.write("full_name;is_public;is_static;is_void;is_nested;method_length;" +
-                "kill_mut;total_mut;nested_depth;direct_test_no;void_no;getter_no;" +
-                "total_method_no;method_sequence");
+                "kill_mut;total_mut;nested_depth;direct_test_no;test_distance;void_no;" +
+                "getter_no;total_method_no;method_sequence");
         for(int pid=0;pid<searchPatterns.size();pid++){
             String treeString = "";
             treeString = searchPatterns.get(pid).toString(treeString);
@@ -175,6 +188,7 @@ public class JhawkMatcher {
                             +thisMethod.total_mut+";"
                             +(thisMethod.methodTreeRoot.maxDepth()-1)+";"
                             +thisMethod.directTestCases.size()+";"
+                            +thisMethod.testReachDistance+";"
                             +classInfoMap.get(className).voidMethodNo+";"
                             +classInfoMap.get(className).getterMethodNo+";"
                             +classInfoMap.get(className).totalMethodNo+";"

@@ -132,4 +132,44 @@ public class Digraph<V> {
         }
         return false;
     }
+
+
+    public HashMap<V,Integer> shortestDistanceBFS(V target){
+        HashMap<V,Integer> shortestDistance = new HashMap<>();
+
+        // Mark all the vertices as not visited (By default set as false)
+        HashMap<V,Boolean> visited = new HashMap<>();
+        for(V v: getAllVertex()){
+            visited.put(v,false);
+        }
+        // Create a queue for BFS
+        LinkedList<V> queue = new LinkedList<>();
+
+        // Mark the current node as visited and enqueue it
+        visited.put(target,true);
+        queue.add(target);
+        shortestDistance.put(target,-1);
+
+        while (queue.size() != 0)
+        {
+            // Dequeue a vertex from queue and print it
+            target = queue.poll();
+
+            // Get all adjacent vertices of the dequeued vertex s
+            // If a adjacent has not been visited, then mark it
+            // visited and enqueue it
+            Iterator<V> i = outboundNeighbors(target).iterator();
+            while (i.hasNext())
+            {
+                V n = i.next();
+                if (!visited.get(n))
+                {
+                    visited.put(n,true);
+                    queue.add(n);
+                    shortestDistance.put(n,shortestDistance.get(target)+1);
+                }
+            }
+        }
+        return shortestDistance;
+    }
 }
