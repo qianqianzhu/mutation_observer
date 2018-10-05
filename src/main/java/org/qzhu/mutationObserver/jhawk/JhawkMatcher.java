@@ -48,10 +48,8 @@ public class JhawkMatcher {
 
         LinkedList<MethodInfo> allMethodInfo = new LinkedList<>();
         for(String fileName: fileNames){
-            System.out.println("Processing "+fileName);
+//            System.out.println("Processing "+fileName);
             LinkedList<MethodInfo> methodInfo = Utils.getAllMethodInfoFromSource(fileName,true);
-            //System.out.println(methodCollector.methodNameCollector);
-            //System.out.println(methodCollector.methodSequenceCollector);
             allMethodInfo.addAll(methodInfo);
         }
 
@@ -66,10 +64,12 @@ public class JhawkMatcher {
         Utils.setAllMethodDirectTestFromDir(sourceClassDir,testClassDir,allMethodInfo);
 
         System.out.println("Parsing Jhawk results...");
-        String jhawkFilename = "/Users/qianqianzhu/phd/testability/ast/jhawk/"+project+"_method.csv";
+        String jhawkFileMethod = "/Users/qianqianzhu/phd/testability/ast/jhawk/"+project+"/"+project+"_method.csv";
+        String jhawkFileClass = "/Users/qianqianzhu/phd/testability/ast/jhawk/"+project+"/"+project+"_class.csv";
+        String jhawkAll = "/Users/qianqianzhu/phd/testability/ast/jhawk/"+project+"/"+project+"_all.csv";
+        combineJhawkResults(jhawkFileMethod,jhawkFileClass,jhawkAll);
         String resultFilename = "/Users/qianqianzhu/phd/testability/ast/jhawk/all/"+project+"_all_result.csv";
-        matchJhawkMethod(jhawkFilename,resultFilename,allMethodInfo);
-
+        matchJhawkMethod(jhawkAll,resultFilename,allMethodInfo);
     }
 
     public static HashMap<String,ArrayList<String>> parseJhawkResults(String jhawkFile) {
@@ -78,23 +78,11 @@ public class JhawkMatcher {
             BufferedReader jhawkReader = new BufferedReader(new FileReader(jhawkFile));
             String line;
             while ((line = jhawkReader.readLine()) != null) {
-                if(line.contains("System;Package;Class;Name; COMP;"))
+                if(line.contains("full_name;COMP;NOCL;NOS;HLTH;HVOC;HEFF;HBUG;"))
                     continue; // skip header line
-                StringBuffer keysb = new StringBuffer();
-                line = line.replace("\"", "");  // remove '"' surrounded by texts
-                line = line.replace(",", ".");  // replace ',' to '.' as decimal point in Jhawk file is ","
 
-                String columns[] = line.split(";");  // total column no.: 31
-                keysb.append(columns[1] + "." + columns[2]);
-                if (columns[2].equals(columns[3]) ||
-                        // nested class cases
-                        (columns[2].contains("$") && columns[2].substring(columns[2].lastIndexOf("$") + 1).equals(columns[3]))) {
-                    keysb.append(":<init>");
-
-                } else {
-                    keysb.append(":" + columns[3]);
-                }
-                String key = keysb.toString();
+                String columns[] = line.split(";");  // total column no.: 367
+                String key = columns[0];
 
                 ArrayList<String> jhawkmethods;
                 if (jhawMethodMap.get(key) == null) {
@@ -106,6 +94,7 @@ public class JhawkMatcher {
                 jhawMethodMap.put(key, jhawkmethods);
 
             }
+            jhawkReader.close();
 
             // sort methodInfo by NLOC: ascending
             for (String methodName : jhawMethodMap.keySet()) {
@@ -115,8 +104,8 @@ public class JhawkMatcher {
                     public int compare(String lhs, String rhs) {
                         String[] lhsColumns = lhs.split(";");
                         String[] rhsColumns = rhs.split(";");
-                        int lhsNLOC = Integer.parseInt(lhsColumns[14]);
-                        int rhsNLOC = Integer.parseInt(rhsColumns[14]);
+                        int lhsNLOC = Integer.parseInt(lhsColumns[11]);
+                        int rhsNLOC = Integer.parseInt(rhsColumns[11]);
 
                         if (lhsNLOC == rhsNLOC)
                             return 0;
@@ -132,6 +121,94 @@ public class JhawkMatcher {
         catch (IOException ioException){
             System.err.println(ioException.getMessage());
             return null;
+        }
+    }
+
+
+    public static HashMap<String,String> parseJhawkClassResults(String jhawkFileClass){
+        try {
+            // parse class metrics
+            HashMap<String, String> jhawClassMap = new HashMap<>();  // store class metrics info: key-className, value-all class-level metrics line
+            BufferedReader jhawkReaderClass = new BufferedReader(new FileReader(jhawkFileClass));
+            String lineClass;
+            while ((lineClass = jhawkReaderClass.readLine()) != null) {
+                if (lineClass.contains("System;Package;Name; No. Methods;"))
+                    continue; // skip header line
+                StringBuffer keysb = new StringBuffer();
+                StringBuffer valuesb = new StringBuffer();
+                lineClass = lineClass.replace("\"", "");  // remove '"' surrounded by texts
+                lineClass = lineClass.replace(",", ".");  // replace ',' to '.' as decimal point in Jhawk file is ","
+
+                String columns[] = lineClass.split(";");  // total column no.: 43
+                keysb.append(columns[1] + "." + columns[2]);  // className
+                for(int i=3;i<43;i++) {
+                    if((i!=29)) // drop columns[29]: Superclass
+                        valuesb.append(";"+columns[i]);
+                }
+                jhawClassMap.put(keysb.toString(),valuesb.toString());
+            }
+            jhawkReaderClass.close();
+            return jhawClassMap;
+        }
+        catch (IOException ioException){
+            System.err.println(ioException.getMessage());
+            return null;
+        }
+
+    }
+
+    public static void combineJhawkResults(String jhawkFileMethod,String jhawkFileClass,String resultFile) {
+        try {
+            HashMap<String, String> jhawClassMap = parseJhawkClassResults(jhawkFileClass);
+            BufferedReader jhawkReader = new BufferedReader(new FileReader(jhawkFileMethod));
+            BufferedWriter writer = new BufferedWriter(new FileWriter(resultFile));
+            writer.write("full_name;COMP;NOCL;NOS;HLTH;HVOC;HEFF;HBUG;CREF;" +
+                    "XMET;LMET;NLOC;VDEC;TDN;NAND;LOOP;MOD;NOPR;EXCT;MDN;EXCR;HVOL;" +
+                    "VREF;NOC;NOA;CAST;HDIF;NEXP;No.Methods(class);LCOM(class);" +
+                    "AVCC(class);NOS(class);HBUG(class);HEFF(class);UWCS(class);" +
+                    "INST(class);PACK(class);RFC(class);CBO(class);MI(class);" +
+                    "CCML(class);NLOC(class);RVF(class);LCOM2(class);MAXCC(class);" +
+                    "R-R(class);NSUB(class);NSUP(class);NCO(class);FOUT(class);" +
+                    "DIT(class);CCOM(class);COH(class);S-R(class);MINC(class);" +
+                    "EXT(class);INTR(class);MPC(class);HVOL(class);HIER(class);" +
+                    "HLTH(class);SIX(class);TCC(class);NQU(class);F-IN(class);" +
+                    "MOD(class);LMC(class)\n");
+            String line;
+            while ((line = jhawkReader.readLine()) != null) {
+                if(line.contains("System;Package;Class;Name; COMP;"))
+                    continue; // skip header line
+                StringBuffer lineSB = new StringBuffer();
+                line = line.replace("\"", "");  // remove '"' surrounded by texts
+                line = line.replace(",", ".");  // replace ',' to '.' as decimal point in Jhawk file is ","
+
+                String columns[] = line.split(";");  // total column no.: 31
+                String className = columns[1] + "." + columns[2];
+                // to rename Jhawk method name
+                if (className.endsWith("_")){
+
+                }
+
+                lineSB.append(className);
+                if (columns[2].equals(columns[3]) ||
+                        // nested class case
+                        (columns[2].contains("$") && columns[2].substring(columns[2].lastIndexOf("$") + 1).equals(columns[3]))) {
+                    lineSB.append(":<init>");
+
+                } else {
+                    lineSB.append(":" + columns[3]);
+                }
+                for(int i=4;i<31;i++){
+                    lineSB.append(";"+columns[i]);
+                }
+                // write combined results to file
+                writer.write(lineSB.toString()+jhawClassMap.get(className)+"\n");
+                writer.flush();
+            }
+            jhawkReader.close();
+            writer.close();
+        }
+        catch (IOException ioException){
+            System.err.println(ioException.getMessage());
         }
     }
 
@@ -154,11 +231,17 @@ public class JhawkMatcher {
             writer.write(";"+treeString);
         }
         // jhawk results
-        writer.write(";COMP;NOCL;NOS;HLTH;HVOC;HEFF;HBUG;" +
-                "CREF;XMET;LMET;NLOC;VDEC;TDN;NAND;LOOP;MOD;NOPR;EXCT;" +
-                "MDN;EXCR;HVOL;VREF;NOC;NOA;CAST;HDIF;NEXP");
-        writer.write("\n");
-
+        writer.write(";COMP;NOCL;NOS;HLTH;HVOC;HEFF;HBUG;CREF;" +
+                "XMET;LMET;NLOC;VDEC;TDN;NAND;LOOP;MOD;NOPR;EXCT;MDN;EXCR;HVOL;" +
+                "VREF;NOC;NOA;CAST;HDIF;NEXP;No.Methods(class);LCOM(class);" +
+                "AVCC(class);NOS(class);HBUG(class);HEFF(class);UWCS(class);" +
+                "INST(class);PACK(class);RFC(class);CBO(class);MI(class);" +
+                "CCML(class);NLOC(class);RVF(class);LCOM2(class);MAXCC(class);" +
+                "R-R(class);NSUB(class);NSUP(class);NCO(class);FOUT(class);" +
+                "DIT(class);CCOM(class);COH(class);S-R(class);MINC(class);" +
+                "EXT(class);INTR(class);MPC(class);HVOL(class);HIER(class);" +
+                "HLTH(class);SIX(class);TCC(class);NQU(class);F-IN(class);" +
+                "MOD(class);LMC(class)\n");
         // data
         for(String methodName: jhawMethodMap.keySet()){
             ArrayList<String> methodLines = jhawMethodMap.get(methodName);
@@ -200,7 +283,7 @@ public class JhawkMatcher {
                     }
 
                     // jhawk data
-                    for (int i = 4; i < 31; i++) {
+                    for (int i = 1; i < 67; i++) {
                         writer.write(";" + columns[i]);
                     }
 

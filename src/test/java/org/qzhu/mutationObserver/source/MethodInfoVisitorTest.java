@@ -114,4 +114,16 @@ public class MethodInfoVisitorTest {
         LinkedList<MethodInfo> allMethodInfo = methodWalker("/XYItemRenderer.java");
         assertEquals(allMethodInfo.size(),0);
     }
+
+    @Test
+    public void testTypeParameters(){
+        LinkedList<MethodInfo> allMethodInfo = methodWalker("/DiffBuilder.java");
+        MethodInfo testMethod1 = allMethodInfo.get(2);
+        assertEquals("org.apache.commons.lang3.builder.DiffBuilder$Diff<Boolean>:getLeft",
+                testMethod1.method_name);
+
+        MethodInfo testMethod2 = allMethodInfo.get(5);
+        assertEquals("org.apache.commons.lang3.builder.DiffBuilder$Diff<Boolean[]>:getLeft",
+                testMethod2.method_name);
+    }
 }

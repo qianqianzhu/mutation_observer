@@ -41,8 +41,12 @@ public  class MethodInfoVisitor extends Java8BaseListener {
 //        System.out.println(classNestCount);
         if(classNestCount>1) {
             className = className+"$"+ctx.Identifier().getText();
+            if(ctx.typeParameters()!=null)
+                className = className+ctx.typeParameters().getText();
         }else{
             className = ctx.Identifier().getText();
+            if(ctx.typeParameters()!=null)
+                className = className+ctx.typeParameters().getText();
 
         }
     }
@@ -78,10 +82,13 @@ public  class MethodInfoVisitor extends Java8BaseListener {
         if(ctx.classBody()!=null) {
             classNestCount++;
 //        System.out.println(classNestCount);
+            int start = ctx.getText().indexOf(ctx.Identifier(0).getText());
+            int end = ctx.getText().indexOf("(");
             if (classNestCount > 1) {
-                className = className + "$" + ctx.Identifier(0).getText();
+                className = className + "$" + ctx.getText().substring(start,end);
             } else {
-                className = ctx.Identifier(0).getText();
+
+                className = ctx.getText().substring(start,end);
             }
         }
     }
@@ -103,11 +110,13 @@ public  class MethodInfoVisitor extends Java8BaseListener {
         if(ctx.classBody()!=null) {
             classNestCount++;
 //        System.out.println(classNestCount);
+            int start = ctx.getText().indexOf(ctx.Identifier(0).getText());
+            int end = ctx.getText().indexOf("(");
             if (classNestCount > 1) {
                 // collect identifier
-                className = className + "$" + ctx.Identifier(0).getText();
+                className = className + "$" + ctx.getText().substring(start,end);
             } else {
-                className = ctx.Identifier(0).getText();
+                className = ctx.getText().substring(start,end);
             }
         }
 
@@ -129,11 +138,13 @@ public  class MethodInfoVisitor extends Java8BaseListener {
         if(ctx.classBody()!=null) {
             classNestCount++;
 //        System.out.println(classNestCount);
+            int start = ctx.getText().indexOf(ctx.Identifier().getText());
+            int end = ctx.getText().indexOf("(");
             if(classNestCount>1) {
                 // collect identifier
-                className = className+"$"+ctx.Identifier().getText();
+                className = className + "$" + ctx.getText().substring(start,end);
             }else{
-                className = ctx.Identifier().getText();
+                className = ctx.getText().substring(start,end);
             }
         }
     }
