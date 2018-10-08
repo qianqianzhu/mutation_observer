@@ -74,4 +74,76 @@ public class JhawkMatcherTest {
         assertEquals(lineNo,55);
     }
 
+
+    @Test
+    public void testMatchJhawkMethodWithRename() throws IOException {
+        String fileName = "./src/test/resources/MinMaxCategoryRenderer.java";
+        LinkedList<MethodInfo> allMethodInfo = getAllMethodInfoFromSource(fileName,true);
+        String pitestFileName = "./src/test/resources/testPitest/jfreechart-1.5.0_mutations.csv";
+        parsePitestFile(pitestFileName,allMethodInfo);
+
+        String jhawkMethodFilename = "./src/test/resources/testJhawk/jfreechart-1.5.0-MinMaxCategoryRenderer_method.csv";
+        String jhawkClassFilename = "./src/test/resources/testJhawk/jfreechart-1.5.0-MinMaxCategoryRenderer_class.csv";
+        String jhawkResultFilename = "./src/test/resources/testJhawk/jfreechart-1.5.0-MinMaxCategoryRenderer_all.csv";
+        combineJhawkResults(jhawkMethodFilename,jhawkClassFilename,jhawkResultFilename);
+
+        String matchResultFilename = "./src/test/resources/testJhawk/jfreechart-1.5.0-MinMaxCategoryRenderer_test_results.csv";
+        matchJhawkMethod(jhawkResultFilename,matchResultFilename,allMethodInfo);
+        // read file to check correctness
+        BufferedReader jhawkReader = new BufferedReader(new FileReader(matchResultFilename));
+        String line;
+        int lineNo = 0;
+        while ((line = jhawkReader.readLine()) != null){
+            String[] columns = line.split(";");
+            assertEquals(87,columns.length);
+            lineNo++;
+        }
+        assertEquals(lineNo,26);
+    }
+
+    @Test
+    public void testMatchesEndWithSuffix(){
+        String[] testString = {
+                "exception:org.bukkit.plugin.PluginDescriptionFile$ThreadLocal<Yaml>$SafeConstructor$AbstractConstruct_0",
+                "exception:org.bukkit.plugin.PluginDescriptionFile$ThreadLocal<Yaml>$SafeConstructor$AbstractConstruct_0:construct"
+
+        };
+
+        Boolean[] expected ={true,false};
+        for (int i=0;i<testString.length;i++){
+            assertEquals(expected[i],matchesEndWithSuffix(testString[i]));
+        }
+    }
+
+    @Test
+    public void testMatchesEndWithSuffixNestedClasses(){
+        String testString = "FunctionUtils$DifferentiableUnivariateFunction_5$UnivariateFunction_0";
+        String[] splits = testString.split("\\$");
+        StringBuffer newClassName = new StringBuffer();
+        for (String split: splits){
+            if(matchesEndWithSuffix(split)){
+                int end = split.lastIndexOf("_");
+                split = split.substring(0,end);
+            }
+            newClassName.append(split+"$");
+        }
+        assertEquals("FunctionUtils$DifferentiableUnivariateFunction$UnivariateFunction",
+                newClassName.deleteCharAt(newClassName.length()-1).toString());
+    }
+
+    @Test
+    public void testMatchesEndWithSuffixNoNestedClasses(){
+        String testString = "FunctionUtils$DifferentiableUnivariateFunction_5";
+        String[] splits = testString.split("\\$");
+        StringBuffer newClassName = new StringBuffer();
+        for (String split: splits){
+            if(matchesEndWithSuffix(split)){
+                int end = split.lastIndexOf("_");
+                split = split.substring(0,end);
+            }
+            newClassName.append(split+"$");
+        }
+        assertEquals("FunctionUtils$DifferentiableUnivariateFunction",
+                newClassName.deleteCharAt(newClassName.length()-1).toString());
+    }
 }

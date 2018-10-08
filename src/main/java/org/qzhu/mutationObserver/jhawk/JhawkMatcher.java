@@ -27,12 +27,12 @@ public class JhawkMatcher {
                 "jfreechart-1.5.0",
                 "pysonar2-2.1"};
 
-        for (String project: projects){
-            gatherJhawkData(project);
-        }
+//        for (String project: projects){
+//            gatherJhawkData(project);
+//        }
 
-//        String project = "pysonar2-2.1";
-//        gatherJhawkData(project);
+        String project = "commons-math-MATH_3_6_1";
+        gatherJhawkData(project);
     }
 
     public static void gatherJhawkData(String project) throws IOException {
@@ -48,7 +48,7 @@ public class JhawkMatcher {
 
         LinkedList<MethodInfo> allMethodInfo = new LinkedList<>();
         for(String fileName: fileNames){
-//            System.out.println("Processing "+fileName);
+            System.out.println("Processing "+fileName);
             LinkedList<MethodInfo> methodInfo = Utils.getAllMethodInfoFromSource(fileName,true);
             allMethodInfo.addAll(methodInfo);
         }
@@ -137,11 +137,11 @@ public class JhawkMatcher {
                 StringBuffer keysb = new StringBuffer();
                 StringBuffer valuesb = new StringBuffer();
                 lineClass = lineClass.replace("\"", "");  // remove '"' surrounded by texts
-                lineClass = lineClass.replace(",", ".");  // replace ',' to '.' as decimal point in Jhawk file is ","
 
                 String columns[] = lineClass.split(";");  // total column no.: 43
                 keysb.append(columns[1] + "." + columns[2]);  // className
                 for(int i=3;i<43;i++) {
+                    columns[i] = columns[i].replace(",", "."); // replace ',' to '.' as decimal point in Jhawk file is ","
                     if((i!=29)) // drop columns[29]: Superclass
                         valuesb.append(";"+columns[i]);
                 }
@@ -179,25 +179,44 @@ public class JhawkMatcher {
                     continue; // skip header line
                 StringBuffer lineSB = new StringBuffer();
                 line = line.replace("\"", "");  // remove '"' surrounded by texts
-                line = line.replace(",", ".");  // replace ',' to '.' as decimal point in Jhawk file is ","
 
                 String columns[] = line.split(";");  // total column no.: 31
-                String className = columns[1] + "." + columns[2];
-                // to rename Jhawk method name
-                if (className.endsWith("_")){
-
+                // remove class name suffix by Jhawk
+                String[] splits = columns[2].split("\\$");
+                StringBuffer newClassName = new StringBuffer();
+                for (String split: splits){
+                    if(matchesEndWithSuffix(split)){
+                        int end = split.lastIndexOf("_");
+                        split = split.substring(0,end);
+                    }
+                    newClassName.append(split+"$");
                 }
 
-                lineSB.append(className);
+                lineSB.append(columns[1]+".");
+                if (newClassName.length()!=0) {
+                    lineSB.append(newClassName.deleteCharAt(newClassName.length() - 1).toString());
+                }else{
+                    lineSB.append("$");
+                }
+                String className = columns[1] + "." + columns[2];  // original Jhawk class for getting class-level metrics
+
+                // remove method name suffix by Jhawk
+                String methodName = columns[3];
+                if (matchesEndWithSuffix(methodName)){
+                    int end = methodName.lastIndexOf("_");
+                    methodName = methodName.substring(0,end);
+                }
+
                 if (columns[2].equals(columns[3]) ||
                         // nested class case
                         (columns[2].contains("$") && columns[2].substring(columns[2].lastIndexOf("$") + 1).equals(columns[3]))) {
                     lineSB.append(":<init>");
 
                 } else {
-                    lineSB.append(":" + columns[3]);
+                    lineSB.append(":" + methodName);
                 }
                 for(int i=4;i<31;i++){
+                    columns[i] = columns[i].replace(",", "."); // replace ',' to '.' as decimal point in Jhawk file is ","
                     lineSB.append(";"+columns[i]);
                 }
                 // write combined results to file
@@ -210,6 +229,10 @@ public class JhawkMatcher {
         catch (IOException ioException){
             System.err.println(ioException.getMessage());
         }
+    }
+
+    public static boolean matchesEndWithSuffix(String s) {
+        return s.matches(".+_[0-9]+$");
     }
 
 

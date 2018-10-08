@@ -1,0 +1,26 @@
+System;Package;Class;Name; COMP; NOCL; NOS; HLTH; HVOC; HEFF; HBUG; CREF; XMET; LMET; NLOC; VDEC; TDN; NAND; LOOP; MOD; NOPR; EXCT; MDN; EXCR; HVOL; VREF; NOC; NOA; CAST; HDIF; NEXP
+No System Name;org.jfree.chart.renderer.category;MinMaxCategoryRenderer;MinMaxCategoryRenderer;1;3;2;7;6;36,19;0,01;0;0;0;3;0;0;2;0;1;5;0;0;0;18,09;0;1;0;0;2,00;1
+No System Name;org.jfree.chart.renderer.category;MinMaxCategoryRenderer;drawItem;13;20;49;543;89;102638,62;1,17;14;15;4;80;13;16;288;0;2;255;0;5;0;3516,32;131;8;10;12;29,19;95
+No System Name;org.jfree.chart.renderer.category;MinMaxCategoryRenderer;equals;6;11;13;89;29;6323,27;0,14;3;2;1;19;1;5;36;0;2;53;0;1;0;432,36;13;1;1;1;14,62;11
+No System Name;org.jfree.chart.renderer.category;MinMaxCategoryRenderer;getGroupPaint;1;8;2;10;10;99,66;0,01;1;0;0;3;0;0;4;0;1;6;0;0;0;33,22;1;1;0;0;3,00;0
+No System Name;org.jfree.chart.renderer.category;MinMaxCategoryRenderer;getGroupStroke;1;8;2;10;10;99,66;0,01;1;0;0;3;0;0;4;0;1;6;0;0;0;33,22;1;1;0;0;3,00;0
+No System Name;org.jfree.chart.renderer.category;MinMaxCategoryRenderer;getIcon;3;9;5;136;43;10553,00;0,25;3;3;0;27;3;0;66;0;1;70;0;0;0;737,97;5;1;3;0;14,30;9
+No System Name;org.jfree.chart.renderer.category;MinMaxCategoryRenderer;getIcon;3;9;5;152;47;13252,91;0,28;4;3;0;29;3;0;74;0;1;78;0;0;0;844,30;5;1;3;0;15,70;9
+No System Name;org.jfree.chart.renderer.category;MinMaxCategoryRenderer$Icon;getIconHeight;1;0;2;10;10;99,66;0,01;0;0;0;3;0;0;4;0;2;6;0;0;0;33,22;1;0;0;0;3,00;0
+No System Name;org.jfree.chart.renderer.category;MinMaxCategoryRenderer$Icon_0;getIconHeight;1;0;2;10;10;99,66;0,01;0;0;0;3;0;0;4;0;2;6;0;0;0;33,22;1;0;0;0;3,00;0
+No System Name;org.jfree.chart.renderer.category;MinMaxCategoryRenderer$Icon;getIconWidth;1;0;2;10;10;99,66;0,01;0;0;0;3;0;0;4;0;2;6;0;0;0;33,22;1;0;0;0;3,00;0
+No System Name;org.jfree.chart.renderer.category;MinMaxCategoryRenderer$Icon_0;getIconWidth;1;0;2;10;10;99,66;0,01;0;0;0;3;0;0;4;0;2;6;0;0;0;33,22;1;0;0;0;3,00;0
+No System Name;org.jfree.chart.renderer.category;MinMaxCategoryRenderer;getMaxIcon;1;8;2;10;10;99,66;0,01;1;0;0;3;0;0;4;0;1;6;0;0;0;33,22;1;1;0;0;3,00;0
+No System Name;org.jfree.chart.renderer.category;MinMaxCategoryRenderer;getMinIcon;1;8;2;10;10;99,66;0,01;1;0;0;3;0;0;4;0;1;6;0;0;0;33,22;1;1;0;0;3,00;0
+No System Name;org.jfree.chart.renderer.category;MinMaxCategoryRenderer;getObjectIcon;1;7;2;10;10;99,66;0,01;1;0;0;3;0;0;4;0;1;6;0;0;0;33,22;1;1;0;0;3,00;0
+No System Name;org.jfree.chart.renderer.category;MinMaxCategoryRenderer;isDrawLines;1;8;2;10;10;99,66;0,01;0;0;0;3;0;0;4;0;1;6;0;0;0;33,22;1;1;0;0;3,00;0
+No System Name;org.jfree.chart.renderer.category;MinMaxCategoryRenderer$Icon;paintIcon;3;0;10;82;32;4006,82;0,14;4;5;0;13;1;2;43;0;2;39;0;1;0;410,00;17;0;4;1;9,77;14
+No System Name;org.jfree.chart.renderer.category;MinMaxCategoryRenderer$Icon_0;paintIcon;3;0;8;66;28;2630,13;0,11;4;4;0;11;1;2;35;0;2;31;0;1;0;317,29;13;0;4;1;8,29;10
+No System Name;org.jfree.chart.renderer.category;MinMaxCategoryRenderer;readObject;1;8;7;108;39;5223,03;0,19;8;5;1;11;0;0;61;0;1;47;2;0;0;570,82;12;1;1;0;9,15;16
+No System Name;org.jfree.chart.renderer.category;MinMaxCategoryRenderer;setDrawLines;2;9;4;24;15;589,38;0,03;0;0;1;6;0;1;11;0;1;13;0;1;0;93,77;4;1;1;0;6,29;3
+No System Name;org.jfree.chart.renderer.category;MinMaxCategoryRenderer;setGroupPaint;1;9;4;23;16;331,20;0,03;2;1;1;5;0;0;12;0;1;11;0;0;0;92,00;3;1;1;0;3,60;3
+No System Name;org.jfree.chart.renderer.category;MinMaxCategoryRenderer;setGroupStroke;1;7;4;23;16;331,20;0,03;2;1;1;5;0;0;12;0;1;11;0;0;0;92,00;3;1;1;0;3,60;3
+No System Name;org.jfree.chart.renderer.category;MinMaxCategoryRenderer;setMaxIcon;1;9;4;23;16;331,20;0,03;2;1;1;5;0;0;12;0;1;11;0;0;0;92,00;3;1;1;0;3,60;3
+No System Name;org.jfree.chart.renderer.category;MinMaxCategoryRenderer;setMinIcon;1;9;4;23;16;331,20;0,03;2;1;1;5;0;0;12;0;1;11;0;0;0;92,00;3;1;1;0;3,60;3
+No System Name;org.jfree.chart.renderer.category;MinMaxCategoryRenderer;setObjectIcon;1;8;4;23;16;331,20;0,03;2;1;1;5;0;0;12;0;1;11;0;0;0;92,00;3;1;1;0;3,60;3
+No System Name;org.jfree.chart.renderer.category;MinMaxCategoryRenderer;writeObject;1;7;4;32;18;567,11;0,04;3;3;0;5;0;0;17;0;1;15;1;0;0;133,44;5;1;1;0;4,25;3

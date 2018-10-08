@@ -41,12 +41,12 @@ public  class MethodInfoVisitor extends Java8BaseListener {
 //        System.out.println(classNestCount);
         if(classNestCount>1) {
             className = className+"$"+ctx.Identifier().getText();
-            if(ctx.typeParameters()!=null)
-                className = className+ctx.typeParameters().getText();
+//            if(ctx.typeParameters()!=null)
+//                className = className+ctx.typeParameters().getText();
         }else{
             className = ctx.Identifier().getText();
-            if(ctx.typeParameters()!=null)
-                className = className+ctx.typeParameters().getText();
+//            if(ctx.typeParameters()!=null)
+//                className = className+ctx.typeParameters().getText();
 
         }
     }
