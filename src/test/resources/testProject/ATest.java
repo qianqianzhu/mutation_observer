@@ -1,6 +1,9 @@
 package org.testproject;
+import org.junit.*;
 
-        import org.junit.Test;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
 public class ATest{
     A classA = new A();
 
@@ -13,16 +16,22 @@ public class ATest{
     @Test
     public void testB(){
         testA();
+        assertNotNull(classA);
     }
 
     @Test
     public void testC(){
         classA.methodA();
+        assertNotNull(classA);
+        assertNotNull(classA);
     }
 
     @Test
     public void testD(){
         classA.methodD();
+        assertNotNull(classA);
+        assertNotNull(classA);
+        assertNotNull(classA);
     }
 }
 

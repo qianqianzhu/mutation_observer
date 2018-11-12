@@ -27,12 +27,12 @@ public class JhawkMatcher {
                 "jfreechart-1.5.0",
                 "pysonar2-2.1"};
 
-//        for (String project: projects){
-//            gatherJhawkData(project);
-//        }
+        for (String project: projects){
+            gatherJhawkData(project);
+        }
 
-        String project = "commons-math-MATH_3_6_1";
-        gatherJhawkData(project);
+//        String project = "commons-math-MATH_3_6_1";
+//        gatherJhawkData(project);
     }
 
     public static void gatherJhawkData(String project) throws IOException {
@@ -246,7 +246,7 @@ public class JhawkMatcher {
         List<Node<String>> searchPatterns;
         searchPatterns= generateSimpleSearchPatterns();
         writer.write("full_name;is_public;is_static;is_void;is_nested;method_length;" +
-                "kill_mut;total_mut;nested_depth;direct_test_no;test_distance;void_no;" +
+                "kill_mut;total_mut;nested_depth;direct_test_no;test_distance;assertionNo;testNLOC;void_no;" +
                 "getter_no;total_method_no;method_sequence");
         for(int pid=0;pid<searchPatterns.size();pid++){
             String treeString = "";
@@ -278,40 +278,44 @@ public class JhawkMatcher {
             else{
                 for(int mid=0;mid<methodLines.size();mid++) {
                     String[] columns = methodLines.get(mid).split(";");
-                    writer.write(methodInfos.get(mid).method_name);
                     // new feature data
                     Map<String, ClassInfo> classInfoMap = sumMethodInfoByClassName(allMethodInfo);  // class-level
                     MethodInfo thisMethod = methodInfos.get(mid);
                     String treeString2 = "";
                     treeString2 = thisMethod.methodTreeRoot.toString(treeString2);
                     String className = thisMethod.className;
-                    writer.write(";" +thisMethod.methodModifier.contains("public")+";"
-                            +thisMethod.methodModifier.contains("static")+";"
-                            +thisMethod.isVoid+";"
-                            +thisMethod.isNested+";"
-                            +(thisMethod.stop_line-thisMethod.start_line+1)+";"
-                            +thisMethod.kill_mut+";"
-                            +thisMethod.total_mut+";"
-                            +(thisMethod.methodTreeRoot.maxDepth()-1)+";"
-                            +thisMethod.directTestCases.size()+";"
-                            +thisMethod.testReachDistance+";"
-                            +classInfoMap.get(className).voidMethodNo+";"
-                            +classInfoMap.get(className).getterMethodNo+";"
-                            +classInfoMap.get(className).totalMethodNo+";"
-                            +treeString2);
+                    //if(thisMethod.isCovered) {
+                        writer.write(methodInfos.get(mid).method_name);
+                        writer.write(";" + thisMethod.methodModifier.contains("public") + ";"
+                                + thisMethod.methodModifier.contains("static") + ";"
+                                + thisMethod.isVoid + ";"
+                                + thisMethod.isNested + ";"
+                                + (thisMethod.stop_line - thisMethod.start_line + 1) + ";"
+                                + thisMethod.kill_mut + ";"
+                                + thisMethod.total_mut + ";"
+                                + (thisMethod.methodTreeRoot.maxDepth() - 1) + ";"
+                                + thisMethod.directTestCases.size() + ";"
+                                + thisMethod.testReachDistance + ";"
+                                + thisMethod.assertionNo + ";"
+                                + thisMethod.testNLOC+";"
+                                + classInfoMap.get(className).voidMethodNo + ";"
+                                + classInfoMap.get(className).getterMethodNo + ";"
+                                + classInfoMap.get(className).totalMethodNo + ";"
+                                + treeString2);
 
-                    for(int pid=0;pid<searchPatterns.size();pid++){
-                        int matchCount = thisMethod.methodTreeRoot.matchCount(searchPatterns.get(pid));
-                        writer.write(";"+Integer.toString(matchCount));
-                    }
+                        for (int pid = 0; pid < searchPatterns.size(); pid++) {
+                            int matchCount = thisMethod.methodTreeRoot.matchCount(searchPatterns.get(pid));
+                            writer.write(";" + Integer.toString(matchCount));
+                        }
 
-                    // jhawk data
-                    for (int i = 1; i < 67; i++) {
-                        writer.write(";" + columns[i]);
-                    }
+                        // jhawk data
+                        for (int i = 1; i < 67; i++) {
+                            writer.write(";" + columns[i]);
+                        }
 
-                    writer.write("\n");
-                    writer.flush();
+                        writer.write("\n");
+                        writer.flush();
+                    //}
                 }
             }
         }

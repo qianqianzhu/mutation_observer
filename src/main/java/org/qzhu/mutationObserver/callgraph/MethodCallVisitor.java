@@ -1,6 +1,7 @@
 package org.qzhu.mutationObserver.callgraph;
 
 import org.apache.bcel.classfile.JavaClass;
+import org.apache.bcel.classfile.LineNumber;
 import org.apache.bcel.generic.*;
 import org.qzhu.mutationObserver.source.MethodInfo;
 
@@ -19,12 +20,13 @@ public class MethodCallVisitor extends EmptyVisitor {
 //    private String format;
     private String testCaseName;
     private HashMap<String,MethodInfo> allMethodInfoMapByMethodByteName;
-    HashSet<String> testSuite;
+//    HashSet<String> testSuite;
+    HashMap<String,TestCaseInfo> testSuite;
     Digraph<String> callGraph;
     boolean directTestFlag;
 
     public MethodCallVisitor(MethodGen m, JavaClass jc, HashMap<String,MethodInfo> allMethodInfoMapByMethodByteName,
-                             boolean directTestFlag, Digraph<String> callGraph,HashSet<String> testSuite) {
+                             boolean directTestFlag, Digraph<String> callGraph,HashMap<String,TestCaseInfo> testSuite) {
         visitedClass = jc;
         mg = m;
         cp = mg.getConstantPool();
@@ -71,11 +73,19 @@ public class MethodCallVisitor extends EmptyVisitor {
         String invokeMethodName = i.getReferenceType(cp)+":"+i.getMethodName(cp)+"("+argumentList(i.getArgumentTypes(cp))+")";
         if(directTestFlag) {
             if (allMethodInfoMapByMethodByteName.containsKey(invokeMethodName)) {
-//            System.out.println(invokeMethodName);
                 MethodInfo methodInfo = allMethodInfoMapByMethodByteName.get(invokeMethodName);
                 methodInfo.directTestCases.add(testCaseName);
             }
-            testSuite.add(testCaseName);
+            // add test case
+            if(testSuite.get(testCaseName)==null){
+                TestCaseInfo testCaseInfo = new TestCaseInfo(testCaseName);
+                testSuite.put(testCaseName,testCaseInfo);
+            }
+            // count assertion no.
+            if(invokeMethodName.startsWith("org.junit.Assert")){
+                testSuite.get(testCaseName).assertNo++;
+                testSuite.put(testCaseName,testSuite.get(testCaseName));
+            }
         }
         callGraph.add(testCaseName,invokeMethodName);
     }
@@ -83,30 +93,25 @@ public class MethodCallVisitor extends EmptyVisitor {
     @Override
     public void visitINVOKEVIRTUAL(INVOKEVIRTUAL i) {
         setDirectTestCases(i);
-//        System.out.println(String.format(format,"M",i.getReferenceType(cp),i.getMethodName(cp),argumentList(i.getArgumentTypes(cp))));
     }
 
     @Override
     public void visitINVOKEINTERFACE(INVOKEINTERFACE i) {
         setDirectTestCases(i);
-//        System.out.println(String.format(format,"I",i.getReferenceType(cp),i.getMethodName(cp),argumentList(i.getArgumentTypes(cp))));
     }
 
     @Override
     public void visitINVOKESPECIAL(INVOKESPECIAL i) {
         setDirectTestCases(i);
-//        System.out.println(String.format(format,"O",i.getReferenceType(cp),i.getMethodName(cp),argumentList(i.getArgumentTypes(cp))));
     }
 
     @Override
     public void visitINVOKESTATIC(INVOKESTATIC i) {
         setDirectTestCases(i);
-//        System.out.println(String.format(format,"S",i.getReferenceType(cp),i.getMethodName(cp),argumentList(i.getArgumentTypes(cp))));
     }
 
     @Override
     public void visitINVOKEDYNAMIC(INVOKEDYNAMIC i) {
         setDirectTestCases(i);
-//        System.out.println(String.format(format,"D",i.getType(cp),i.getMethodName(cp), argumentList(i.getArgumentTypes(cp))));
     }
 }

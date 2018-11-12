@@ -71,7 +71,7 @@ public class JhawkMatcherTest {
             assertEquals(87,columns.length);
             lineNo++;
         }
-        assertEquals(lineNo,55);
+        assertEquals(55,lineNo);
     }
 
 
@@ -98,7 +98,7 @@ public class JhawkMatcherTest {
             assertEquals(87,columns.length);
             lineNo++;
         }
-        assertEquals(lineNo,26);
+        assertEquals(26,lineNo);
     }
 
     @Test

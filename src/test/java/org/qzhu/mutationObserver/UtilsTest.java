@@ -112,14 +112,14 @@ public class UtilsTest {
         LinkedList<MethodInfo> allMethodInfo = getAllMethodInfoFromSource(fileName,false);
         setAllMethodBytecodeNameFromJar(jarFileName,allMethodInfo);
 
-        assertEquals(allMethodInfo.get(0).method_name,"org.apache.commons.lang3.concurrent.Memoizer:<init>");
-        assertEquals(allMethodInfo.get(0).bytecodeName,"org.apache.commons.lang3.concurrent.Memoizer:<init>(org.apache.commons.lang3.concurrent.Computable)");
+        assertEquals("org.apache.commons.lang3.concurrent.Memoizer:<init>",allMethodInfo.get(0).method_name);
+        assertEquals("org.apache.commons.lang3.concurrent.Memoizer:<init>(org.apache.commons.lang3.concurrent.Computable)",allMethodInfo.get(0).bytecodeName);
 
-        assertEquals(allMethodInfo.get(2).method_name,"org.apache.commons.lang3.concurrent.Memoizer$Callable:call");
-        assertEquals(allMethodInfo.get(2).bytecodeName,"org.apache.commons.lang3.concurrent.Memoizer$1:call()");
+        assertEquals("org.apache.commons.lang3.concurrent.Memoizer$Callable<O>:call",allMethodInfo.get(2).method_name);
+        assertEquals("org.apache.commons.lang3.concurrent.Memoizer$1:call()",allMethodInfo.get(2).bytecodeName);
 
-        assertEquals(allMethodInfo.get(3).method_name,"org.apache.commons.lang3.concurrent.Memoizer:compute");
-        assertEquals(allMethodInfo.get(3).bytecodeName,"org.apache.commons.lang3.concurrent.Memoizer:compute(java.lang.Object)");
+        assertEquals("org.apache.commons.lang3.concurrent.Memoizer:compute",allMethodInfo.get(3).method_name);
+        assertEquals("org.apache.commons.lang3.concurrent.Memoizer:compute(java.lang.Object)",allMethodInfo.get(3).bytecodeName);
 
     }
 
@@ -130,14 +130,15 @@ public class UtilsTest {
         LinkedList<MethodInfo> allMethodInfo = getAllMethodInfoFromSource(fileName,false);
         setAllMethodBytecodeNameFromDir(classDir,allMethodInfo);
 
-        assertEquals(allMethodInfo.get(0).method_name,"org.apache.commons.lang3.concurrent.Memoizer:<init>");
-        assertEquals(allMethodInfo.get(0).bytecodeName,"org.apache.commons.lang3.concurrent.Memoizer:<init>(org.apache.commons.lang3.concurrent.Computable)");
+        assertEquals("org.apache.commons.lang3.concurrent.Memoizer:<init>",allMethodInfo.get(0).method_name);
+        assertEquals("org.apache.commons.lang3.concurrent.Memoizer:<init>(org.apache.commons.lang3.concurrent.Computable)",
+                allMethodInfo.get(0).bytecodeName);
 
-        assertEquals(allMethodInfo.get(2).method_name,"org.apache.commons.lang3.concurrent.Memoizer$Callable:call");
-        assertEquals(allMethodInfo.get(2).bytecodeName,"org.apache.commons.lang3.concurrent.Memoizer$1:call()");
+        assertEquals("org.apache.commons.lang3.concurrent.Memoizer$Callable<O>:call",allMethodInfo.get(2).method_name);
+        assertEquals("org.apache.commons.lang3.concurrent.Memoizer$1:call()",allMethodInfo.get(2).bytecodeName);
 
-        assertEquals(allMethodInfo.get(3).method_name,"org.apache.commons.lang3.concurrent.Memoizer:compute");
-        assertEquals(allMethodInfo.get(3).bytecodeName,"org.apache.commons.lang3.concurrent.Memoizer:compute(java.lang.Object)");
+        assertEquals("org.apache.commons.lang3.concurrent.Memoizer:compute",allMethodInfo.get(3).method_name);
+        assertEquals("org.apache.commons.lang3.concurrent.Memoizer:compute(java.lang.Object)",allMethodInfo.get(3).bytecodeName);
     }
 
 
@@ -149,7 +150,7 @@ public class UtilsTest {
 
         LinkedList<MethodInfo> allMethodInfo = getAllMethodInfoFromSource(fileName,false);
         HashMap<String,MethodInfo> allMethodInfoMap = generateMethodInfoMapByMethodByteName(sourceJarFileName,allMethodInfo);
-        assertEquals("org.apache.commons.lang3.concurrent.Memoizer$Callable:call",
+        assertEquals("org.apache.commons.lang3.concurrent.Memoizer$Callable<O>:call",
                 allMethodInfoMap.get("org.apache.commons.lang3.concurrent.Memoizer$1:call()").method_name);
         assertEquals("org.apache.commons.lang3.concurrent.Memoizer:<init>",
                 allMethodInfoMap.get("org.apache.commons.lang3.concurrent.Memoizer:<init>(org.apache.commons.lang3.concurrent.Computable)").method_name
@@ -228,7 +229,7 @@ public class UtilsTest {
 
         expected.put("START",-1);
 
-        for (String methodName: allMethodTestReachDistance.keySet()){
+        for (String methodName: expected.keySet()){
 //            System.out.println(methodName+" "+allMethodTestReachDistance.get(methodName));
             assertEquals(expected.get(methodName),allMethodTestReachDistance.get(methodName));
         }

@@ -1,6 +1,9 @@
 package org.qzhu.mutationObserver.source;
 
+import org.qzhu.mutationObserver.callgraph.TestCaseInfo;
+
 import java.util.ArrayList;
+import java.util.HashSet;
 
 /**
  * @author Qianqian Zhu
@@ -21,6 +24,9 @@ public class MethodInfo {
     public Node<String> methodTreeRoot;
     public ArrayList<String> directTestCases = new ArrayList<>();
     public int testReachDistance = Integer.MAX_VALUE;
+    public boolean isCovered=true;
+    public int assertionNo=0;
+    public int testNLOC=0;
 
     public MethodInfo(int start_line, int stop_line, String className,String method_name) {
         this.start_line = start_line;
@@ -34,6 +40,7 @@ public class MethodInfo {
     public void setMethod_sequence(ArrayList<String> method_sequence) {
         this.method_sequence = method_sequence;
     }
+
 
 
 

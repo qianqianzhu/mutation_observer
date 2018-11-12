@@ -11,6 +11,7 @@ import org.qzhu.grammar.Java8Lexer;
 import org.qzhu.grammar.Java8Parser;
 import org.qzhu.mutationObserver.callgraph.ClassVisitor;
 import org.qzhu.mutationObserver.callgraph.Digraph;
+import org.qzhu.mutationObserver.callgraph.TestCaseInfo;
 import org.qzhu.mutationObserver.source.SourceMethodsIndexer;
 import org.qzhu.mutationObserver.source.*;
 
@@ -146,7 +147,7 @@ public class Utils {
                 cp = new ClassParser(testJarFileName,entry.getName());
                 HashMap<String,MethodInfo> allMethodInfoMap = generateMethodInfoMapByMethodByteName(sourceJarFileName,allMethodInfo);
 //                System.out.println(allMethodInfo.size());
-                HashSet<String> testSuite = new HashSet<>();
+                HashMap<String,TestCaseInfo> testSuite = new HashMap<>();
                 Digraph<String> callGraph = new Digraph<>();
                 ClassVisitor classVisitor = new ClassVisitor(cp.parse(),allMethodInfoMap,true,callGraph,testSuite);
                 classVisitor.start();
@@ -163,7 +164,7 @@ public class Utils {
         try {
             List<String> fileNames = new ArrayList<>();
             fileNames = Utils.getAllFilesFromDir(fileNames,".class",testDir);
-            HashSet<String> testSuite = new HashSet<>();
+            HashMap<String,TestCaseInfo> testSuite = new HashMap<>();
             Digraph<String> callGraph = new Digraph<>();
             for(String filename: fileNames) {
                 ClassParser cp =new ClassParser(filename);
@@ -183,13 +184,12 @@ public class Utils {
             // parse test files (.class)
             List<String> testFileNames = new ArrayList<>();
             testFileNames = Utils.getAllFilesFromDir(testFileNames,".class",testDir);
-            HashSet<String> testSuite = new HashSet<>();
+            HashMap<String,TestCaseInfo> testSuite = new HashMap<>();
             Digraph<String> callGraph = new Digraph<>();
 
             HashMap<String,MethodInfo> allMethodInfoMap = generateMethodInfoMapByMethodByteName(sourceDir,allMethodInfo);
             for(String filename: testFileNames) {
                 ClassParser cp =new ClassParser(filename);
-
                 ClassVisitor classVisitor = new ClassVisitor(cp.parse(),allMethodInfoMap,true,callGraph,testSuite);
                 classVisitor.start();
             }
@@ -204,7 +204,7 @@ public class Utils {
             }
 
             // add virtual starting point to simply shortest path problem
-            for(String test:testSuite){
+            for(String test:testSuite.keySet()){
                 callGraph.add("START",test);
             }
 
@@ -217,6 +217,15 @@ public class Utils {
                 int distance = allMethodTestReachDistance.get(methodName);
                 if (method!=null){
                     method.testReachDistance = distance;
+                }
+            }
+
+            // update method's assertNo
+            for (MethodInfo methodInfo: allMethodInfo){
+                HashSet<String> directTests = new HashSet<>(methodInfo.directTestCases);
+                for (String test:directTests){
+                    methodInfo.assertionNo += testSuite.get(test).assertNo;
+                    methodInfo.testNLOC += testSuite.get(test).NLOC;
                 }
             }
 
@@ -498,6 +507,9 @@ public class Utils {
                         method.total_mut = method.total_mut+1;
                         if(!(columns[5].equals("SURVIVED") || columns[5].equals("NO_COVERAGE"))){
                             method.kill_mut = method.kill_mut+1;
+                        }
+                        if(columns[5].equals("NO_COVERAGE")){
+                            method.isCovered=false;
                         }
                     }
                 }

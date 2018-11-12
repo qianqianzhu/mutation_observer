@@ -3,6 +3,7 @@ package org.qzhu.mutationObserver.callgraph;
 import org.apache.bcel.classfile.*;
 import org.apache.bcel.generic.ConstantPoolGen;
 import org.apache.bcel.generic.MethodGen;
+import org.apache.bcel.generic.Type;
 import org.qzhu.mutationObserver.source.MethodInfo;
 
 import java.util.HashMap;
@@ -19,11 +20,11 @@ public class ClassVisitor extends EmptyVisitor {
     private HashMap<String,MethodInfo> allMethodInfoMapByMethodByteName;
     boolean directTestFlag;
     Digraph<String> callGraph;
-    HashSet<String> testSuite;
+    HashMap<String,TestCaseInfo> testSuite;
 //    private String classReferenceFormat;
 
     public ClassVisitor(JavaClass jc, HashMap<String,MethodInfo> allMethodInfoMapByMethodByteName,
-                        boolean directTestFlag, Digraph<String> callGraph,HashSet<String> testSuite) {
+                        boolean directTestFlag, Digraph<String> callGraph,HashMap<String,TestCaseInfo> testSuite) {
         clazz = jc;
         this.directTestFlag = directTestFlag;
         this.callGraph = callGraph;
@@ -44,25 +45,41 @@ public class ClassVisitor extends EmptyVisitor {
             methods[i].accept(this);
     }
 
-//    public void visitConstantPool(ConstantPool constantPool) {
-//        for (int i = 0; i < constantPool.getLength(); i++) {
-//            Constant constant = constantPool.getConstant(i);
-//            if (constant == null)
-//                continue;
-//            if (constant.getTag() == 7) {
-//                String referencedClass =
-//                    constantPool.constantToString(constant);
-//                System.out.println(String.format(classReferenceFormat,
-//                        referencedClass));
-//            }
-//        }
-//    }
+
+    private String argumentList(Type[] arguments) {
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < arguments.length; i++) {
+            if (i != 0) {
+                sb.append(",");
+            }
+            sb.append(arguments[i].toString());
+        }
+        return sb.toString();
+    }
 
     public void visitMethod(Method method) {
         MethodGen mg = new MethodGen(method, clazz.getClassName(), constants);
         MethodCallVisitor visitor = new MethodCallVisitor(mg,clazz,allMethodInfoMapByMethodByteName,
                 directTestFlag,callGraph,testSuite);
-        visitor.start(); 
+        visitor.start();
+
+        // count test's LNOC
+        int lastLine = -1;
+        int firstLine = Integer.MAX_VALUE;
+        if (method.getLineNumberTable() != null){
+            LineNumberTable table = method.getLineNumberTable();
+            if (table!=null){
+                for (LineNumber line : table.getLineNumberTable()) {
+                    lastLine = Math.max(lastLine, line.getLineNumber());
+                    firstLine = Math.min(firstLine, line.getLineNumber());
+                }
+            }
+        }
+        String methodName = clazz.getClassName() + ":" + mg.getName() +"(" + argumentList(mg.getArgumentTypes()) + ")";
+        if (testSuite.get(methodName)!=null) {
+            testSuite.get(methodName).NLOC = lastLine - firstLine + 1;
+        }
+
     }
 
     public void start() {
