@@ -224,6 +224,12 @@ public class Utils {
             for (MethodInfo methodInfo: allMethodInfo){
                 HashSet<String> directTests = new HashSet<>(methodInfo.directTestCases);
                 for (String test:directTests){
+                    // consider assertions inside test helper functions
+                    for(String tesMethodCalls: testSuite.get(test).methodCalls){
+                        if(testSuite.get(tesMethodCalls)!=null) {
+                            methodInfo.assertionNo += testSuite.get(tesMethodCalls).assertNo;
+                        }
+                    }
                     methodInfo.assertionNo += testSuite.get(test).assertNo;
                     methodInfo.testNLOC += testSuite.get(test).NLOC;
                 }

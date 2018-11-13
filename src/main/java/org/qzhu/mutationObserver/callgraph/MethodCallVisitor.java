@@ -81,6 +81,11 @@ public class MethodCallVisitor extends EmptyVisitor {
                 TestCaseInfo testCaseInfo = new TestCaseInfo(testCaseName);
                 testSuite.put(testCaseName,testCaseInfo);
             }
+            // method calls among tests
+            if(!allMethodInfoMapByMethodByteName.containsKey(invokeMethodName)){
+                testSuite.get(testCaseName).methodCalls.add(invokeMethodName);
+            }
+
             // count assertion no.
             if(invokeMethodName.startsWith("org.junit.Assert")){
                 testSuite.get(testCaseName).assertNo++;

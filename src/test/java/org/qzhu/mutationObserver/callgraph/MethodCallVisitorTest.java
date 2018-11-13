@@ -7,6 +7,8 @@ import java.io.IOException;
 import java.util.*;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 /**
  * @author Qianqian Zhu
@@ -61,15 +63,24 @@ public class MethodCallVisitorTest {
     @Test
     public void testTestCaseInfo2(){
         HashMap<String,TestCaseInfo> testSuite = testWalker("./src/test/resources/ConversionTest.class");
-        for (String name: testSuite.keySet()){
-           System.out.println(name +" " + testSuite.get(name).assertNo + " "+ testSuite.get(name).NLOC);
+        assertTrue(testSuite.get("org.apache.commons.lang3.ConversionTest:testLongToBinary()").methodCalls
+                .contains("org.apache.commons.lang3.ConversionTest:assertBinaryEquals(boolean[],boolean[])"));
+
+        assertTrue(testSuite.get("org.apache.commons.lang3.ConversionTest:testShortToBinary()").methodCalls
+                .contains("org.apache.commons.lang3.ConversionTest:assertBinaryEquals(boolean[],boolean[])"));
+
+        assertFalse(testSuite.get("org.apache.commons.lang3.ConversionTest:testHexToShort()").methodCalls
+                .contains("org.apache.commons.lang3.ConversionTest:assertBinaryEquals(boolean[],boolean[])"));
+
+//        for (String name: testSuite.keySet()){
+//           System.out.println(name +" " + testSuite.get(name).assertNo + " "+ testSuite.get(name).methodCalls.contains("org.apache.commons.lang3.ConversionTest:assertBinaryEquals(boolean[],boolean[])"));
 //            int assertNo = testSuite.get(name).assertNo;
 //            int nloc = testSuite.get(name).NLOC;
 //            int expectedAssertNo = expectedAssert.get(name);
 //            int expectedNloc = expectedNLOC.get(name);
 //            assertEquals(expectedAssertNo,assertNo);
 //            assertEquals(expectedNloc,nloc);
-        }
+//        }
     }
 
 }
