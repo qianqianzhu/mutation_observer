@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report.xsd" name="org.apache.commons.lang3.math.NumberUtilsTest" time="0.025" tests="101" errors="0" skipped="0" failures="0">
+  <properties>
+    <property name="java.runtime.name" value="Java(TM) SE Runtime Environment"/>
+    <property name="sun.boot.library.path" value="/Library/Java/JavaVirtualMachines/jdk1.8.0_181.jdk/Contents/Home/jre/lib"/>
+    <property name="java.vm.version" value="25.181-b13"/>
+    <property name="gopherProxySet" value="false"/>
+    <property name="java.vm.vendor" value="Oracle Corporation"/>
+    <property name="maven.multiModuleProjectDirectory" value="/Users/qianqianzhu/phd/testability/ast/project/commons-lang-LANG_3_7"/>
+    <property name="java.vendor.url" value="http://java.oracle.com/"/>
+    <property name="path.separator" value=":"/>
+    <property name="guice.disable.misplaced.annotation.check" value="true"/>
+    <property name="java.vm.name" value="Java HotSpot(TM) 64-Bit Server VM"/>
+    <property name="file.encoding.pkg" value="sun.io"/>
+    <property name="user.country" value="NL"/>
+    <property name="sun.java.launcher" value="SUN_STANDARD"/>
+    <property name="sun.os.patch.level" value="unknown"/>
+    <property name="java.vm.specification.name" value="Java Virtual Machine Specification"/>
+    <property name="user.dir" value="/Users/qianqianzhu/phd/testability/ast/project/commons-lang-LANG_3_7"/>
+    <property name="java.runtime.version" value="1.8.0_181-b13"/>
+    <property name="java.awt.graphicsenv" value="sun.awt.CGraphicsEnvironment"/>
+    <property name="java.endorsed.dirs" value="/Library/Java/JavaVirtualMachines/jdk1.8.0_181.jdk/Contents/Home/jre/lib/endorsed"/>
+    <property name="os.arch" value="x86_64"/>
+    <property name="java.io.tmpdir" value="/var/folders/9h/p56gkrb53hv983vj077k6tbr0000gn/T/"/>
+    <property name="line.separator" value="&#10;"/>
+    <property name="java.vm.specification.vendor" value="Oracle Corporation"/>
+    <property name="os.name" value="Mac OS X"/>
+    <property name="classworlds.conf" value="/usr/local/Cellar/maven/3.5.4/libexec/bin/m2.conf"/>
+    <property name="sun.jnu.encoding" value="UTF-8"/>
+    <property name="java.library.path" value="/Users/qianqianzhu/Library/Java/Extensions:/Library/Java/Extensions:/Network/Library/Java/Extensions:/System/Library/Java/Extensions:/usr/lib/java:."/>
+    <property name="maven.conf" value="/usr/local/Cellar/maven/3.5.4/libexec/conf"/>
+    <property name="java.specification.name" value="Java Platform API Specification"/>
+    <property name="java.class.version" value="52.0"/>
+    <property name="sun.management.compiler" value="HotSpot 64-Bit Tiered Compilers"/>
+    <property name="os.version" value="10.13.6"/>
+    <property name="library.jansi.path" value="/usr/local/Cellar/maven/3.5.4/libexec/lib/jansi-native"/>
+    <property name="http.nonProxyHosts" value="local|*.local|169.254/16|*.169.254/16"/>
+    <property name="user.home" value="/Users/qianqianzhu"/>
+    <property name="user.timezone" value="Europe/Amsterdam"/>
+    <property name="java.awt.printerjob" value="sun.lwawt.macosx.CPrinterJob"/>
+    <property name="java.specification.version" value="1.8"/>
+    <property name="file.encoding" value="UTF-8"/>
+    <property name="user.name" value="qianqianzhu"/>
+    <property name="java.class.path" value="/usr/local/Cellar/maven/3.5.4/libexec/boot/plexus-classworlds-2.5.2.jar"/>
+    <property name="java.vm.specification.version" value="1.8"/>
+    <property name="sun.arch.data.model" value="64"/>
+    <property name="java.home" value="/Library/Java/JavaVirtualMachines/jdk1.8.0_181.jdk/Contents/Home/jre"/>
+    <property name="sun.java.command" value="org.codehaus.plexus.classworlds.launcher.Launcher package"/>
+    <property name="java.specification.vendor" value="Oracle Corporation"/>
+    <property name="user.language" value="en"/>
+    <property name="awt.toolkit" value="sun.lwawt.macosx.LWCToolkit"/>
+    <property name="java.vm.info" value="mixed mode"/>
+    <property name="java.version" value="1.8.0_181"/>
+    <property name="java.ext.dirs" value="/Users/qianqianzhu/Library/Java/Extensions:/Library/Java/JavaVirtualMachines/jdk1.8.0_181.jdk/Contents/Home/jre/lib/ext:/Library/Java/Extensions:/Network/Library/Java/Extensions:/System/Library/Java/Extensions:/usr/lib/java"/>
+    <property name="sun.boot.class.path" value="/Library/Java/JavaVirtualMachines/jdk1.8.0_181.jdk/Contents/Home/jre/lib/resources.jar:/Library/Java/JavaVirtualMachines/jdk1.8.0_181.jdk/Contents/Home/jre/lib/rt.jar:/Library/Java/JavaVirtualMachines/jdk1.8.0_181.jdk/Contents/Home/jre/lib/sunrsasign.jar:/Library/Java/JavaVirtualMachines/jdk1.8.0_181.jdk/Contents/Home/jre/lib/jsse.jar:/Library/Java/JavaVirtualMachines/jdk1.8.0_181.jdk/Contents/Home/jre/lib/jce.jar:/Library/Java/JavaVirtualMachines/jdk1.8.0_181.jdk/Contents/Home/jre/lib/charsets.jar:/Library/Java/JavaVirtualMachines/jdk1.8.0_181.jdk/Contents/Home/jre/lib/jfr.jar:/Library/Java/JavaVirtualMachines/jdk1.8.0_181.jdk/Contents/Home/jre/classes"/>
+    <property name="java.vendor" value="Oracle Corporation"/>
+    <property name="maven.home" value="/usr/local/Cellar/maven/3.5.4/libexec"/>
+    <property name="file.separator" value="/"/>
+    <property name="java.vendor.url.bug" value="http://bugreport.sun.com/bugreport/"/>
+    <property name="sun.cpu.endian" value="little"/>
+    <property name="sun.io.unicode.encoding" value="UnicodeBig"/>
+    <property name="socksNonProxyHosts" value="local|*.local|169.254/16|*.169.254/16"/>
+    <property name="ftp.nonProxyHosts" value="local|*.local|169.254/16|*.169.254/16"/>
+    <property name="sun.cpu.isalist" value=""/>
+  </properties>
+  <testcase name="testMaximumDouble" classname="org.apache.commons.lang3.math.NumberUtilsTest" time="0"/>
+  <testcase name="testToFloatStringF" classname="org.apache.commons.lang3.math.NumberUtilsTest" time="0"/>
+  <testcase name="testMinDouble_emptyArray" classname="org.apache.commons.lang3.math.NumberUtilsTest" time="0.001"/>
+  <testcase name="testMinimumFloat" classname="org.apache.commons.lang3.math.NumberUtilsTest" time="0"/>
+  <testcase name="testMinimumShort" classname="org.apache.commons.lang3.math.NumberUtilsTest" time="0"/>
+  <testcase name="testMinLong_nullArray" classname="org.apache.commons.lang3.math.NumberUtilsTest" time="0"/>
+  <testcase name="testCreateNumber" classname="org.apache.commons.lang3.math.NumberUtilsTest" time="0.004"/>
+  <testcase name="testToLongString" classname="org.apache.commons.lang3.math.NumberUtilsTest" time="0"/>
+  <testcase name="testMaxByte_emptyArray" classname="org.apache.commons.lang3.math.NumberUtilsTest" time="0"/>
+  <testcase name="testToIntStringI" classname="org.apache.commons.lang3.math.NumberUtilsTest" time="0.001"/>
+  <testcase name="testLANG971" classname="org.apache.commons.lang3.math.NumberUtilsTest" time="0"/>
+  <testcase name="testLANG972" classname="org.apache.commons.lang3.math.NumberUtilsTest" time="0"/>
+  <testcase name="testLANG992" classname="org.apache.commons.lang3.math.NumberUtilsTest" time="0"/>
+  <testcase name="testMaxShort_nullArray" classname="org.apache.commons.lang3.math.NumberUtilsTest" time="0"/>
+  <testcase name="testToIntString" classname="org.apache.commons.lang3.math.NumberUtilsTest" time="0.001"/>
+  <testcase name="testMinShort_emptyArray" classname="org.apache.commons.lang3.math.NumberUtilsTest" time="0"/>
+  <testcase name="testCreateFloat" classname="org.apache.commons.lang3.math.NumberUtilsTest" time="0.001"/>
+  <testcase name="testMaxShort_emptyArray" classname="org.apache.commons.lang3.math.NumberUtilsTest" time="0"/>
+  <testcase name="testMinimumInt" classname="org.apache.commons.lang3.math.NumberUtilsTest" time="0"/>
+  <testcase name="testMinDouble_nullArray" classname="org.apache.commons.lang3.math.NumberUtilsTest" time="0"/>
+  <testcase name="testMaxDouble_nullArray" classname="org.apache.commons.lang3.math.NumberUtilsTest" time="0.001"/>
+  <testcase name="testMaxDouble_emptyArray" classname="org.apache.commons.lang3.math.NumberUtilsTest" time="0"/>
+  <testcase name="testMaxInt_emptyArray" classname="org.apache.commons.lang3.math.NumberUtilsTest" time="0"/>
+  <testcase name="testMaxLong_emptyArray" classname="org.apache.commons.lang3.math.NumberUtilsTest" time="0"/>
+  <testcase name="testLang1087" classname="org.apache.commons.lang3.math.NumberUtilsTest" time="0"/>
+  <testcase name="compareInt" classname="org.apache.commons.lang3.math.NumberUtilsTest" time="0.001"/>
+  <testcase name="testToByteStringI" classname="org.apache.commons.lang3.math.NumberUtilsTest" time="0"/>
+  <testcase name="testToFloatString" classname="org.apache.commons.lang3.math.NumberUtilsTest" time="0"/>
+  <testcase name="testMinFloat_emptyArray" classname="org.apache.commons.lang3.math.NumberUtilsTest" time="0"/>
+  <testcase name="testMinFloat" classname="org.apache.commons.lang3.math.NumberUtilsTest" time="0"/>
+  <testcase name="testMaxFloat_emptyArray" classname="org.apache.commons.lang3.math.NumberUtilsTest" time="0"/>
+  <testcase name="testMinShort" classname="org.apache.commons.lang3.math.NumberUtilsTest" time="0"/>
+  <testcase name="testCreateNumberMagnitude" classname="org.apache.commons.lang3.math.NumberUtilsTest" time="0.001"/>
+  <testcase name="testMinFloat_nullArray" classname="org.apache.commons.lang3.math.NumberUtilsTest" time="0"/>
+  <testcase name="testToByteString" classname="org.apache.commons.lang3.math.NumberUtilsTest" time="0"/>
+  <testcase name="testLang300" classname="org.apache.commons.lang3.math.NumberUtilsTest" time="0"/>
+  <testcase name="testLang381" classname="org.apache.commons.lang3.math.NumberUtilsTest" time="0.001"/>
+  <testcase name="compareByte" classname="org.apache.commons.lang3.math.NumberUtilsTest" time="0"/>
+  <testcase name="compareLong" classname="org.apache.commons.lang3.math.NumberUtilsTest" time="0"/>
+  <testcase name="testMaxDouble" classname="org.apache.commons.lang3.math.NumberUtilsTest" time="0"/>
+  <testcase name="testIsParsable" classname="org.apache.commons.lang3.math.NumberUtilsTest" time="0"/>
+  <testcase name="testMinimumDouble" classname="org.apache.commons.lang3.math.NumberUtilsTest" time="0"/>
+  <testcase name="testIsNumberLANG1252" classname="org.apache.commons.lang3.math.NumberUtilsTest" time="0"/>
+  <testcase name="testLANG1252" classname="org.apache.commons.lang3.math.NumberUtilsTest" time="0"/>
+  <testcase name="testMaxLong_nullArray" classname="org.apache.commons.lang3.math.NumberUtilsTest" time="0"/>
+  <testcase name="testIsDigits" classname="org.apache.commons.lang3.math.NumberUtilsTest" time="0"/>
+  <testcase name="compareShort" classname="org.apache.commons.lang3.math.NumberUtilsTest" time="0"/>
+  <testcase name="testMinByte_nullArray" classname="org.apache.commons.lang3.math.NumberUtilsTest" time="0.001"/>
+  <testcase name="testCreateBigDecimal" classname="org.apache.commons.lang3.math.NumberUtilsTest" time="0"/>
+  <testcase name="testConstants" classname="org.apache.commons.lang3.math.NumberUtilsTest" time="0"/>
+  <testcase name="testCompareDouble" classname="org.apache.commons.lang3.math.NumberUtilsTest" time="0"/>
+  <testcase name="testMinimumByte" classname="org.apache.commons.lang3.math.NumberUtilsTest" time="0"/>
+  <testcase name="testMinimumLong" classname="org.apache.commons.lang3.math.NumberUtilsTest" time="0"/>
+  <testcase name="testIsNumber" classname="org.apache.commons.lang3.math.NumberUtilsTest" time="0.002"/>
+  <testcase name="testMinDouble" classname="org.apache.commons.lang3.math.NumberUtilsTest" time="0"/>
+  <testcase name="testMaxByte" classname="org.apache.commons.lang3.math.NumberUtilsTest" time="0"/>
+  <testcase name="testMaxLong" classname="org.apache.commons.lang3.math.NumberUtilsTest" time="0"/>
+  <testcase name="testMaxFloat_nullArray" classname="org.apache.commons.lang3.math.NumberUtilsTest" time="0"/>
+  <testcase name="testCreateBigInteger" classname="org.apache.commons.lang3.math.NumberUtilsTest" time="0"/>
+  <testcase name="testCreateLong" classname="org.apache.commons.lang3.math.NumberUtilsTest" time="0"/>
+  <testcase name="testMinByte" classname="org.apache.commons.lang3.math.NumberUtilsTest" time="0"/>
+  <testcase name="testMinLong" classname="org.apache.commons.lang3.math.NumberUtilsTest" time="0"/>
+  <testcase name="testMaximumInt" classname="org.apache.commons.lang3.math.NumberUtilsTest" time="0"/>
+  <testcase name="testCreateNumberFailure_1" classname="org.apache.commons.lang3.math.NumberUtilsTest" time="0"/>
+  <testcase name="testCreateNumberFailure_2" classname="org.apache.commons.lang3.math.NumberUtilsTest" time="0.001"/>
+  <testcase name="testCreateNumberFailure_3" classname="org.apache.commons.lang3.math.NumberUtilsTest" time="0"/>
+  <testcase name="testCreateNumberFailure_4" classname="org.apache.commons.lang3.math.NumberUtilsTest" time="0"/>
+  <testcase name="testCreateNumberFailure_5" classname="org.apache.commons.lang3.math.NumberUtilsTest" time="0"/>
+  <testcase name="testCreateNumberFailure_6" classname="org.apache.commons.lang3.math.NumberUtilsTest" time="0"/>
+  <testcase name="testCreateNumberFailure_7" classname="org.apache.commons.lang3.math.NumberUtilsTest" time="0"/>
+  <testcase name="testCreateNumberFailure_8" classname="org.apache.commons.lang3.math.NumberUtilsTest" time="0"/>
+  <testcase name="testMaximumByte" classname="org.apache.commons.lang3.math.NumberUtilsTest" time="0"/>
+  <testcase name="testMaximumLong" classname="org.apache.commons.lang3.math.NumberUtilsTest" time="0"/>
+  <testcase name="testMaxFloat" classname="org.apache.commons.lang3.math.NumberUtilsTest" time="0.001"/>
+  <testcase name="testMaxShort" classname="org.apache.commons.lang3.math.NumberUtilsTest" time="0"/>
+  <testcase name="testIsCreatable" classname="org.apache.commons.lang3.math.NumberUtilsTest" time="0.001"/>
+  <testcase name="testCompareFloat" classname="org.apache.commons.lang3.math.NumberUtilsTest" time="0"/>
+  <testcase name="TestLang747" classname="org.apache.commons.lang3.math.NumberUtilsTest" time="0"/>
+  <testcase name="testIsNumberLANG971" classname="org.apache.commons.lang3.math.NumberUtilsTest" time="0.001"/>
+  <testcase name="testIsNumberLANG972" classname="org.apache.commons.lang3.math.NumberUtilsTest" time="0"/>
+  <testcase name="testIsNumberLANG992" classname="org.apache.commons.lang3.math.NumberUtilsTest" time="0"/>
+  <testcase name="testMinInt_emptyArray" classname="org.apache.commons.lang3.math.NumberUtilsTest" time="0"/>
+  <testcase name="testMinByte_emptyArray" classname="org.apache.commons.lang3.math.NumberUtilsTest" time="0"/>
+  <testcase name="testMaxInt" classname="org.apache.commons.lang3.math.NumberUtilsTest" time="0"/>
+  <testcase name="testMinInt" classname="org.apache.commons.lang3.math.NumberUtilsTest" time="0"/>
+  <testcase name="testMinInt_nullArray" classname="org.apache.commons.lang3.math.NumberUtilsTest" time="0"/>
+  <testcase name="testMinShort_nullArray" classname="org.apache.commons.lang3.math.NumberUtilsTest" time="0.001"/>
+  <testcase name="testMaxInt_nullArray" classname="org.apache.commons.lang3.math.NumberUtilsTest" time="0"/>
+  <testcase name="testStringToDoubleString" classname="org.apache.commons.lang3.math.NumberUtilsTest" time="0"/>
+  <testcase name="testMaximumFloat" classname="org.apache.commons.lang3.math.NumberUtilsTest" time="0"/>
+  <testcase name="testMaximumShort" classname="org.apache.commons.lang3.math.NumberUtilsTest" time="0"/>
+  <testcase name="testToShortStringI" classname="org.apache.commons.lang3.math.NumberUtilsTest" time="0"/>
+  <testcase name="testCreateInteger" classname="org.apache.commons.lang3.math.NumberUtilsTest" time="0"/>
+  <testcase name="testToLongStringL" classname="org.apache.commons.lang3.math.NumberUtilsTest" time="0"/>
+  <testcase name="testStringToDoubleStringD" classname="org.apache.commons.lang3.math.NumberUtilsTest" time="0"/>
+  <testcase name="testToShortString" classname="org.apache.commons.lang3.math.NumberUtilsTest" time="0"/>
+  <testcase name="testConstructor" classname="org.apache.commons.lang3.math.NumberUtilsTest" time="0"/>
+  <testcase name="testStringCreateNumberEnsureNoPrecisionLoss" classname="org.apache.commons.lang3.math.NumberUtilsTest" time="0.001"/>
+  <testcase name="testMaxByte_nullArray" classname="org.apache.commons.lang3.math.NumberUtilsTest" time="0"/>
+  <testcase name="testCreateDouble" classname="org.apache.commons.lang3.math.NumberUtilsTest" time="0"/>
+  <testcase name="testMinLong_emptyArray" classname="org.apache.commons.lang3.math.NumberUtilsTest" time="0"/>
+</testsuite>

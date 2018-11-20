@@ -68,7 +68,7 @@ public class JhawkMatcherTest {
         int lineNo = 0;
         while ((line = jhawkReader.readLine()) != null){
             String[] columns = line.split(";");
-            assertEquals(87,columns.length);
+            assertEquals(89,columns.length);
             lineNo++;
         }
         assertEquals(55,lineNo);
@@ -95,7 +95,7 @@ public class JhawkMatcherTest {
         int lineNo = 0;
         while ((line = jhawkReader.readLine()) != null){
             String[] columns = line.split(";");
-            assertEquals(87,columns.length);
+            assertEquals(89,columns.length);
             lineNo++;
         }
         assertEquals(26,lineNo);

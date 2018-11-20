@@ -51,7 +51,7 @@ public class NodeTest {
         String treeString="";
         treeString = root.toString(treeString);
         //treeString= tree2string(root,treeString);
-        assertEquals(treeString,"(root(node1(node11(node111)(node112)(noise))(noise)(noise)(node12))(node2(node21)(node22)))");
+        assertEquals("(root(node1(node11(node111)(node112)(noise))(noise)(noise)(node12))(node2(node21)(node22)))",treeString);
     }
 
     @Test
@@ -61,7 +61,7 @@ public class NodeTest {
         assertEquals(maxDepth,4);
         Node<String> oneDepthNode = new Node<>("root");
         int maxDepth2 = oneDepthNode.maxDepth();
-        assertEquals(maxDepth2,1);
+        assertEquals(1,maxDepth2);
     }
 
     @Test
@@ -72,7 +72,7 @@ public class NodeTest {
         List<Node<String>> matchNodes = root.matchFirst(searchPattern);
         assertEquals(matchNodes.size(),3);
         for(int i=0;i<matchNodes.size();i++){
-            assertEquals(matchNodes.get(i).getData(),expectedData[i]);
+            assertEquals(expectedData[i],matchNodes.get(i).getData());
         }
     }
 
@@ -99,10 +99,10 @@ public class NodeTest {
         Node<String> root = createTree();
         Node<String> searchPattern = new Node<>("node1");
         searchPattern.addChild(new Node<>("noise"));
-        assertEquals(root.matchCount(searchPattern),2);
+        assertEquals(2,root.matchCount(searchPattern));
 
         Node<String> searchPattern2 = new Node<>("noise");
-        assertEquals(root.matchCount(searchPattern2),3);
+        assertEquals(3,root.matchCount(searchPattern2));
 
     }
 

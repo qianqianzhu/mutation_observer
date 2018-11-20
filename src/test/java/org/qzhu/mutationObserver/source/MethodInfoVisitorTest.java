@@ -44,8 +44,8 @@ public class MethodInfoVisitorTest {
         LinkedList<MethodInfo> allMethodInfo = methodWalker("/TypeUtils.java");
 
         MethodInfo testMethod0 = allMethodInfo.get(0);
-        assertEquals(testMethod0.start_line,57);
-        assertEquals(testMethod0.stop_line,58);
+        assertEquals(57,testMethod0.start_line);
+        assertEquals(58,testMethod0.stop_line);
         assertTrue(testMethod0.isVoid);
         assertTrue(testMethod0.methodModifier.contains("private"));
         assertTrue(testMethod0.method_name.equals("org.apache.commons.lang3.reflect.TypeUtils$WildcardTypeBuilder:<init>"));
@@ -74,7 +74,7 @@ public class MethodInfoVisitorTest {
         MethodInfo testMethod1 = allMethodInfo.get(1);
         String treeString = "";
         treeString = testMethod1.methodTreeRoot.toString(treeString);
-        assertEquals(treeString,"(root(for(if(if-else(if)(if-else(if)(if))))))");
+        assertEquals("(root(for(if(if-else(if)(if-else(if)(if))))))",treeString);
     }
 
 
@@ -84,12 +84,12 @@ public class MethodInfoVisitorTest {
         MethodInfo testMethod1 = allMethodInfo.get(2);
         String treeString = "";
         treeString = testMethod1.methodTreeRoot.toString(treeString);
-        assertEquals(treeString,"(root)");
+        assertEquals("(root)",treeString);
 
         MethodInfo testMethod2 = allMethodInfo.get(3);
         String treeString2 = "";
         treeString = testMethod2.methodTreeRoot.toString(treeString2);
-        assertEquals(treeString,"(root(while(if(if))(if)))");
+        assertEquals("(root(while(if(if))(if)))",treeString);
 
     }
 
@@ -97,14 +97,14 @@ public class MethodInfoVisitorTest {
     public void testEnumClassGetter(){
         LinkedList<MethodInfo> allMethodInfo = methodWalker("/ChatColor.java");
         MethodInfo testMethod1 = allMethodInfo.get(0);
-        assertEquals(testMethod1.method_name,"org.bukkit.ChatColor:<init>");
+        assertEquals("org.bukkit.ChatColor:<init>",testMethod1.method_name);
 
         MethodInfo testMethod2 = allMethodInfo.get(2);
-        assertEquals(testMethod2.method_name,"org.bukkit.ChatColor:getChar");
+        assertEquals("org.bukkit.ChatColor:getChar",testMethod2.method_name);
         assertTrue(testMethod2.isGetter);
 
         MethodInfo testMethod3 = allMethodInfo.get(6);
-        assertEquals(testMethod3.method_name,"org.bukkit.ChatColor:getByChar");
+        assertEquals("org.bukkit.ChatColor:getByChar",testMethod3.method_name);
         assertFalse(testMethod3.isGetter);
     }
 

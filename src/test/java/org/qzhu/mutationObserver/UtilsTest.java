@@ -1,9 +1,6 @@
 package org.qzhu.mutationObserver;
 
-import org.apache.bcel.classfile.ClassParser;
 import org.junit.Test;
-import org.qzhu.mutationObserver.callgraph.ClassVisitor;
-import org.qzhu.mutationObserver.callgraph.Digraph;
 import org.qzhu.mutationObserver.source.MethodInfo;
 
 import java.io.IOException;
@@ -23,7 +20,7 @@ public class UtilsTest {
         String testDir ="./src/main/resources/";
         List<String> fileNames = new ArrayList<>();
         fileNames = getAllFilesFromDir(fileNames,".java",testDir);
-        assertEquals(fileNames.size(),3);
+        assertEquals(3,fileNames.size());
         assertTrue(fileNames.contains("./src/main/resources/helloworld.java"));
         assertTrue(fileNames.contains("./src/main/resources/ClassPathUtils.java"));
     }
@@ -40,7 +37,7 @@ public class UtilsTest {
         a.addAll(Arrays.asList(sq1));
         b.addAll(Arrays.asList(sq2));
 
-        assertEquals(lcs(a,b),4);
+        assertEquals(4,lcs(a,b));
 
     }
 
@@ -55,7 +52,7 @@ public class UtilsTest {
         a.addAll(Arrays.asList(sq1));
         b.addAll(Arrays.asList(sq2));
 
-        assertEquals(lcs(a,b),3);
+        assertEquals(3,lcs(a,b));
 
     }
 
@@ -64,14 +61,14 @@ public class UtilsTest {
         String fileName = "./src/test/resources/Memoizer.java";
         LinkedList<MethodInfo> allMethodInfo = getAllMethodInfoFromSource(fileName,false);
         HashMap<String,ArrayList<MethodInfo>> allMethodInfoMap = generateMethodInfoMapByClassName(allMethodInfo,true);
-        assertEquals(allMethodInfoMap.size(),1);
+        assertEquals(1,allMethodInfoMap.size());
         assertTrue(allMethodInfoMap.keySet().contains("org.apache.commons.lang3.concurrent.Memoizer"));
     }
 
 
     @Test
     public void testParsePitestFile() throws IOException {
-        String pitestFileName = "/Users/qianqianzhu/phd/testability/mutation_testing_observability/pitest_result/commons-lang-LANG_3_7_mutations.csv";
+        String pitestFileName = "./src/test/resources/testPitest/commons-lang-LANG_3_7_mutations.csv";
         String fileName = "./src/test/resources/Memoizer.java";
         LinkedList<MethodInfo> allMethodInfo = getAllMethodInfoFromSource(fileName,false);
 
@@ -84,13 +81,13 @@ public class UtilsTest {
 //            System.out.println(method.method_name+":"+method.kill_mut+" "+method.total_mut);
 //        }
 
-        assertEquals(allMethodInfo.get(0).method_name,"org.apache.commons.lang3.concurrent.Memoizer:<init>");
-        assertEquals(allMethodInfo.get(0).total_mut,0);
-        assertEquals(allMethodInfo.get(0).kill_mut,0);
+        assertEquals("org.apache.commons.lang3.concurrent.Memoizer:<init>",allMethodInfo.get(0).method_name);
+        assertEquals(0,allMethodInfo.get(0).total_mut);
+        assertEquals(0,allMethodInfo.get(0).kill_mut);
 
-        assertEquals(allMethodInfo.get(3).method_name,"org.apache.commons.lang3.concurrent.Memoizer:compute");
-        assertEquals(allMethodInfo.get(3).total_mut,6);
-        assertEquals(allMethodInfo.get(3).kill_mut,6);
+        assertEquals("org.apache.commons.lang3.concurrent.Memoizer:compute",allMethodInfo.get(3).method_name);
+        assertEquals(6,allMethodInfo.get(3).total_mut);
+        assertEquals(6,allMethodInfo.get(3).kill_mut);
 
     }
 
@@ -107,7 +104,7 @@ public class UtilsTest {
 
     @Test
     public void testSetAllMethodBytecodeNameFromJar(){
-        String jarFileName = "/Users/qianqianzhu/phd/testability/ast/project/commons-lang-LANG_3_7/target/commons-lang3-3.7.jar";
+        String jarFileName = "./src/test/resources/commons-lang-LANG_3_7/commons-lang3-3.7.jar";
         String fileName = "./src/test/resources/Memoizer.java";
         LinkedList<MethodInfo> allMethodInfo = getAllMethodInfoFromSource(fileName,false);
         setAllMethodBytecodeNameFromJar(jarFileName,allMethodInfo);
@@ -125,7 +122,7 @@ public class UtilsTest {
 
     @Test
     public void testSetAllMethodBytecodeNameFromDir(){
-        String classDir = "/Users/qianqianzhu/phd/testability/ast/project/commons-lang-LANG_3_7/target/classes";
+        String classDir = "./src/test/resources/commons-lang-LANG_3_7/classes";
         String fileName = "./src/test/resources/Memoizer.java";
         LinkedList<MethodInfo> allMethodInfo = getAllMethodInfoFromSource(fileName,false);
         setAllMethodBytecodeNameFromDir(classDir,allMethodInfo);
@@ -144,7 +141,7 @@ public class UtilsTest {
 
     @Test
     public void testGenerateMethodInfoMapByMethodByteName(){
-        String sourceJarFileName = "/Users/qianqianzhu/phd/testability/ast/project/commons-lang-LANG_3_7/target/commons-lang3-3.7.jar";
+        String sourceJarFileName = "./src/test/resources/commons-lang-LANG_3_7/commons-lang3-3.7.jar";
 
         String fileName = "./src/test/resources/Memoizer.java";
 
@@ -160,8 +157,8 @@ public class UtilsTest {
 
     @Test
     public void testSetAllMethodDirectTestFromJar(){
-        String testJarFileName = "/Users/qianqianzhu/phd/testability/ast/project/commons-lang-LANG_3_7/target/commons-lang3-3.7-tests.jar";
-        String sourceJarFileName = "/Users/qianqianzhu/phd/testability/ast/project/commons-lang-LANG_3_7/target/commons-lang3-3.7.jar";
+        String testJarFileName = "./src/test/resources/commons-lang-LANG_3_7/commons-lang3-3.7-tests.jar";
+        String sourceJarFileName = "./src/test/resources/commons-lang-LANG_3_7/commons-lang3-3.7.jar";
 
         String fileName = "./src/test/resources/Memoizer.java";
         LinkedList<MethodInfo> allMethodInfo = getAllMethodInfoFromSource(fileName,false);
@@ -180,8 +177,8 @@ public class UtilsTest {
 
     @Test
     public void testSetAllMethodDirectTestFromFromDir(){
-        String sourceDir = "/Users/qianqianzhu/phd/testability/ast/project/commons-lang-LANG_3_7/target/classes";
-        String testDir = "/Users/qianqianzhu/phd/testability/ast/project/commons-lang-LANG_3_7/target/test-classes";
+        String sourceDir = "./src/test/resources/commons-lang-LANG_3_7/classes";
+        String testDir = "./src/test/resources/commons-lang-LANG_3_7/test-classes";
 
         String fileName = "./src/test/resources/Memoizer.java";
         LinkedList<MethodInfo> allMethodInfo = getAllMethodInfoFromSource(fileName,false);
