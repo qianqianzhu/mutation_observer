@@ -74,7 +74,7 @@ public class MethodInfoVisitorTest {
         MethodInfo testMethod1 = allMethodInfo.get(1);
         String treeString = "";
         treeString = testMethod1.methodTreeRoot.toString(treeString);
-        assertEquals("(root(for(if(if-else(if)(if-else(if)(if))))))",treeString);
+        assertEquals("(root(for(if(if-else(if)(if-else)))))",treeString);
     }
 
 

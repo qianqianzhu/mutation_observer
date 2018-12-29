@@ -49,8 +49,6 @@ public class SourceMethodsIndexer extends EmptyVisitor {
             String methodName = method.getName();
             String methodBytecodeName = clazz.getClassName() + ":" + methodName + "(" + argumentList(method.getArgumentTypes()) + ")" ;
             setMethodBytecodeName(classNameWithoutNest,methodName,lineNo,methodBytecodeName);
-
-            //System.out.println(methodBytecodeName+":"+lineNo);
         }
     }
 

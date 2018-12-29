@@ -99,18 +99,6 @@ public class Node<T> implements Cloneable{
         return newParent;
     }
 
-//    public List<Node<T>> getNextLayer(){
-//        List<Node<T>> nextLayer = new LinkedList<Node<T>>();
-//        if(parent==null){
-//            return children;
-//        }else{
-//            for(Node thisLayerNode: parent.getChildren()){
-//                nextLayer.addAll(thisLayerNode.getChildren());
-//            }
-//            return nextLayer;
-//        }
-//    }
-
     public List<Node<T>> matchFirst(Node<T> node){
         if(this==null)
             return null;

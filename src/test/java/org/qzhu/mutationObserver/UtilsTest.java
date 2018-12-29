@@ -73,8 +73,8 @@ public class UtilsTest {
         LinkedList<MethodInfo> allMethodInfo = getAllMethodInfoFromSource(fileName,false);
 
         int totalMethod = allMethodInfo.size();
-        System.out.println("Total method no.: "+totalMethod);
-        System.out.println("Parsing Pitest results...");
+//        System.out.println("Total method no.: "+totalMethod);
+//        System.out.println("Parsing Pitest results...");
 
         parsePitestFile(pitestFileName,allMethodInfo);
 //        for (MethodInfo method:allMethodInfo){
@@ -200,10 +200,10 @@ public class UtilsTest {
 
     @Test
     public void testSetTestReachDistance() {
-        String sourceDir = "./src/test/resources/testProject/classes";
-        String testDir = "./src/test/resources/testProject/test-classes";
+        String sourceDir = "./src/test/resources/testProject/target/classes";
+        String testDir = "./src/test/resources/testProject/target/test-classes";
 
-        String fileName = "./src/test/resources/testProject/A.java";
+        String fileName = "./src/test/resources/testProject/src/main/java/org/testproject/A.java";
         LinkedList<MethodInfo> allMethodInfo = getAllMethodInfoFromSource(fileName,true);
 
         HashMap<String,Integer> allMethodTestReachDistance = setAllMethodDirectTestFromDir(sourceDir,testDir,allMethodInfo);
@@ -234,8 +234,8 @@ public class UtilsTest {
 
     @Test
     public void testSetTestReachDistanceLargeClass(){
-        String sourceDir = "./src/test/resources/testProject/classes";
-        String testDir = "./src/test/resources/testProject/test-classes";
+        String sourceDir = "./src/test/resources/testProject/target/classes";
+        String testDir = "./src/test/resources/testProject/target/test-classes";
 
         String fileName = "./src/test/resources/TypeUtils.java";
         LinkedList<MethodInfo> allMethodInfo = getAllMethodInfoFromSource(fileName,true);

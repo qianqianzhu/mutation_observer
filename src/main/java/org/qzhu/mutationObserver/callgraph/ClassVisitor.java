@@ -5,9 +5,7 @@ import org.apache.bcel.generic.ConstantPoolGen;
 import org.apache.bcel.generic.MethodGen;
 import org.apache.bcel.generic.Type;
 import org.qzhu.mutationObserver.source.MethodInfo;
-
 import java.util.HashMap;
-import java.util.HashSet;
 
 /**
  * @author Qianqian Zhu
@@ -21,7 +19,6 @@ public class ClassVisitor extends EmptyVisitor {
     boolean directTestFlag;
     Digraph<String> callGraph;
     HashMap<String,TestCaseInfo> testSuite;
-//    private String classReferenceFormat;
 
     public ClassVisitor(JavaClass jc, HashMap<String,MethodInfo> allMethodInfoMapByMethodByteName,
                         boolean directTestFlag, Digraph<String> callGraph,HashMap<String,TestCaseInfo> testSuite) {
@@ -31,7 +28,6 @@ public class ClassVisitor extends EmptyVisitor {
         this.testSuite = testSuite;
         constants = new ConstantPoolGen(clazz.getConstantPool());
         this.allMethodInfoMapByMethodByteName = allMethodInfoMapByMethodByteName;
-//        classReferenceFormat = "C:" + clazz.getClassName() + " %s";
     }
 
     public Digraph<String> getCallGraph(){
@@ -39,7 +35,6 @@ public class ClassVisitor extends EmptyVisitor {
     }
 
     public void visitJavaClass(JavaClass jc) {
-//        jc.getConstantPool().accept(this);
         Method[] methods = jc.getMethods();
         for (int i = 0; i < methods.length; i++)
             methods[i].accept(this);

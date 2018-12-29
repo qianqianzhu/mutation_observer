@@ -14,13 +14,5 @@ public class ClassInfo {
         this.className = className;
     }
 
-    public double getVoidNonVoidPercent(){
-         return ((double)voidMethodNo)/(totalMethodNo-voidMethodNo);
-     }
-
-    public double getVoidGetterPercent(){
-        return ((double)voidMethodNo)/getterMethodNo;
-    }
-
 }
 

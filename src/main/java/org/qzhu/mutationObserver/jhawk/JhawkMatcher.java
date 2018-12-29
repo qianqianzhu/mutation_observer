@@ -31,8 +31,6 @@ public class JhawkMatcher {
             gatherJhawkData(project);
         }
 
-//        String project = "commons-math-MATH_3_6_1";
-//        gatherJhawkData(project);
     }
 
     public static void gatherJhawkData(String project) throws IOException {
@@ -284,38 +282,35 @@ public class JhawkMatcher {
                     String treeString2 = "";
                     treeString2 = thisMethod.methodTreeRoot.toString(treeString2);
                     String className = thisMethod.className;
-                    //if(thisMethod.isCovered) {
-                        writer.write(methodInfos.get(mid).method_name);
-                        writer.write(";" + thisMethod.methodModifier.contains("public") + ";"
-                                + thisMethod.methodModifier.contains("static") + ";"
-                                + thisMethod.isVoid + ";"
-                                + thisMethod.isNested + ";"
-                                + (thisMethod.stop_line - thisMethod.start_line + 1) + ";"
-                                + thisMethod.kill_mut + ";"
-                                + thisMethod.total_mut + ";"
-                                + (thisMethod.methodTreeRoot.maxDepth() - 1) + ";"
-                                + thisMethod.directTestCases.size() + ";"
-                                + thisMethod.testReachDistance + ";"
-                                + thisMethod.assertionNo + ";"
-                                + thisMethod.testNLOC+";"
-                                + classInfoMap.get(className).voidMethodNo + ";"
-                                + classInfoMap.get(className).getterMethodNo + ";"
-                                + classInfoMap.get(className).totalMethodNo + ";"
-                                + treeString2);
+                    writer.write(methodInfos.get(mid).method_name);
+                    writer.write(";" + thisMethod.methodModifier.contains("public") + ";"
+                            + thisMethod.methodModifier.contains("static") + ";"
+                            + thisMethod.isVoid + ";"
+                            + thisMethod.isNested + ";"
+                            + (thisMethod.stop_line - thisMethod.start_line + 1) + ";"
+                            + thisMethod.kill_mut + ";"
+                            + thisMethod.total_mut + ";"
+                            + (thisMethod.methodTreeRoot.maxDepth() - 1) + ";"
+                            + thisMethod.directTestCases.size() + ";"
+                            + thisMethod.testReachDistance + ";"
+                            + thisMethod.assertionNo + ";"
+                            + thisMethod.testNLOC+";"
+                            + classInfoMap.get(className).voidMethodNo + ";"
+                            + classInfoMap.get(className).getterMethodNo + ";"
+                            + classInfoMap.get(className).totalMethodNo + ";"
+                            + treeString2);
 
-                        for (int pid = 0; pid < searchPatterns.size(); pid++) {
-                            int matchCount = thisMethod.methodTreeRoot.matchCount(searchPatterns.get(pid));
-                            writer.write(";" + Integer.toString(matchCount));
-                        }
+                    for (int pid = 0; pid < searchPatterns.size(); pid++) {
+                        int matchCount = thisMethod.methodTreeRoot.matchCount(searchPatterns.get(pid));
+                        writer.write(";" + Integer.toString(matchCount));
+                    }
 
-                        // jhawk data
-                        for (int i = 1; i < 67; i++) {
-                            writer.write(";" + columns[i]);
-                        }
+                    for (int i = 1; i < 67; i++) {
+                        writer.write(";" + columns[i]);
+                    }
 
-                        writer.write("\n");
-                        writer.flush();
-                    //}
+                    writer.write("\n");
+                    writer.flush();
                 }
             }
         }

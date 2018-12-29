@@ -146,7 +146,6 @@ public class Utils {
 
                 cp = new ClassParser(testJarFileName,entry.getName());
                 HashMap<String,MethodInfo> allMethodInfoMap = generateMethodInfoMapByMethodByteName(sourceJarFileName,allMethodInfo);
-//                System.out.println(allMethodInfo.size());
                 HashMap<String,TestCaseInfo> testSuite = new HashMap<>();
                 Digraph<String> callGraph = new Digraph<>();
                 ClassVisitor classVisitor = new ClassVisitor(cp.parse(),allMethodInfoMap,true,callGraph,testSuite);
@@ -500,11 +499,9 @@ public class Utils {
             if(className.indexOf("$")!=-1) {
                 classNameWithoutNest = className.substring(0, className.indexOf("$"));
             }
-            //System.out.println(classNameWithoutNest);
             int lineNo = Integer.parseInt(columns[4].trim());
             // iterate method map
             if(allMethodMap.containsKey(classNameWithoutNest)){
-//                System.out.println(classNameWithoutNest);
                 // match method name
                 ArrayList<MethodInfo> methodInfos = allMethodMap.get(classNameWithoutNest);
                 for(MethodInfo method: methodInfos){

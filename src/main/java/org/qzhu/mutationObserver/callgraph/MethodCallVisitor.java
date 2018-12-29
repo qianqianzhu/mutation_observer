@@ -17,10 +17,8 @@ public class MethodCallVisitor extends EmptyVisitor {
     JavaClass visitedClass;
     private MethodGen mg;
     private ConstantPoolGen cp;
-//    private String format;
     private String testCaseName;
     private HashMap<String,MethodInfo> allMethodInfoMapByMethodByteName;
-//    HashSet<String> testSuite;
     HashMap<String,TestCaseInfo> testSuite;
     Digraph<String> callGraph;
     boolean directTestFlag;
@@ -35,8 +33,6 @@ public class MethodCallVisitor extends EmptyVisitor {
         this.testSuite = testSuite;
         this.allMethodInfoMapByMethodByteName = allMethodInfoMapByMethodByteName;
         testCaseName = visitedClass.getClassName() + ":" + mg.getName() +"(" + argumentList(mg.getArgumentTypes()) + ")";
-//        format = "M:" + visitedClass.getClassName() + ":" + mg.getName() +"(" + argumentList(mg.getArgumentTypes()) + ")"
-//            + " " + "(%s)%s:%s(%s)";
     }
 
     private String argumentList(Type[] arguments) {
@@ -87,7 +83,8 @@ public class MethodCallVisitor extends EmptyVisitor {
             }
 
             // count assertion no.
-            if(invokeMethodName.startsWith("org.junit.Assert")){
+            if(invokeMethodName.startsWith("org.junit.Assert")
+                    || invokeMethodName.startsWith("junit.framework.Assert") ){
                 testSuite.get(testCaseName).assertNo++;
                 testSuite.put(testCaseName,testSuite.get(testCaseName));
             }

@@ -1,32 +1,31 @@
 package org.testproject;
 import org.junit.*;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static junit.framework.Assert.assertNotNull;
 
 public class ATest{
     A classA = new A();
 
-    @Test
+    @Test @Ignore
     public void testA(){
         classA.methodA();
         testC();
     }
 
-    @Test
+    @Test @Ignore
     public void testB(){
         testA();
         assertNotNull(classA);
     }
 
-    @Test
+    @Test @Ignore
     public void testC(){
         classA.methodA();
         assertNotNull(classA);
         assertNotNull(classA);
     }
 
-    @Test
+    @Test @Ignore
     public void testD(){
         classA.methodD();
         assertNotNull(classA);
@@ -34,4 +33,5 @@ public class ATest{
         assertNotNull(classA);
     }
 }
+
 

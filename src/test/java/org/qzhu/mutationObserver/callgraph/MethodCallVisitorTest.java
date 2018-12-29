@@ -33,7 +33,7 @@ public class MethodCallVisitorTest {
 
     @Test
     public void testTestCaseInfo(){
-        HashMap<String,TestCaseInfo> testSuite = testWalker("./src/test/resources/testProject/test-classes/ATest.class");
+        HashMap<String,TestCaseInfo> testSuite = testWalker("./src/test/resources/testProject/target/test-classes/org/testproject/ATest.class");
 
         HashMap<String,Integer> expectedAssert = new HashMap<>();
         expectedAssert.put("org.testproject.ATest:testA()",0);
@@ -48,7 +48,7 @@ public class MethodCallVisitorTest {
         expectedNLOC.put("org.testproject.ATest:testD()",5);
 
         for (String name: expectedAssert.keySet()){
-//           System.out.println(name +" " + testSuite.get(name).assertNo + " "+ testSuite.get(name).NLOC);
+           //System.out.println(name +" " + testSuite.get(name).assertNo + " "+ testSuite.get(name).NLOC);
             int assertNo = testSuite.get(name).assertNo;
             int nloc = testSuite.get(name).NLOC;
             int expectedAssertNo = expectedAssert.get(name);

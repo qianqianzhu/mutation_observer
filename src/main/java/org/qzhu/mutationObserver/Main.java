@@ -46,8 +46,6 @@ class Main {
        for(String fileName: fileNames){
            System.out.println("Processing "+fileName);
            LinkedList<MethodInfo> methodInfo = Utils.getAllMethodInfoFromSource(fileName,is_simple);
-           //System.out.println(methodCollector.methodNameCollector);
-           //System.out.println(methodCollector.methodSequenceCollector);
            allMethodInfo.addAll(methodInfo);
        }
 
