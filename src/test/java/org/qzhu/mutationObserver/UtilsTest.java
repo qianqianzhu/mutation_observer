@@ -58,7 +58,7 @@ public class UtilsTest {
 
     @Test
     public void testGenerateMethodInfoMapByClassName(){
-        String fileName = "./src/test/resources/Memoizer.java";
+        String fileName = "./src/test/test_resources/Memoizer.java";
         LinkedList<MethodInfo> allMethodInfo = getAllMethodInfoFromSource(fileName,false);
         HashMap<String,ArrayList<MethodInfo>> allMethodInfoMap = generateMethodInfoMapByClassName(allMethodInfo,true);
         assertEquals(1,allMethodInfoMap.size());
@@ -68,8 +68,8 @@ public class UtilsTest {
 
     @Test
     public void testParsePitestFile() throws IOException {
-        String pitestFileName = "./src/test/resources/testPitest/commons-lang-LANG_3_7_mutations.csv";
-        String fileName = "./src/test/resources/Memoizer.java";
+        String pitestFileName = "./src/test/test_resources/testPitest/commons-lang-LANG_3_7_mutations.csv";
+        String fileName = "./src/test/test_resources/Memoizer.java";
         LinkedList<MethodInfo> allMethodInfo = getAllMethodInfoFromSource(fileName,false);
 
         int totalMethod = allMethodInfo.size();
@@ -94,7 +94,7 @@ public class UtilsTest {
 
     @Test
     public void testGenerateFeatureMatrix() throws IOException {
-        String fileName = "./src/test/resources/helloworld.java";
+        String fileName = "./src/test/test_resources/helloworld.java";
         LinkedList<MethodInfo> allMethodInfo = getAllMethodInfoFromSource(fileName,false);
         String resultFileName = "./src/main/results/test_match_count.csv";
         generateFeatureMatrix(allMethodInfo,resultFileName,false);
@@ -104,8 +104,8 @@ public class UtilsTest {
 
     @Test
     public void testSetAllMethodBytecodeNameFromJar(){
-        String jarFileName = "./src/test/resources/commons-lang-LANG_3_7/commons-lang3-3.7.jar";
-        String fileName = "./src/test/resources/Memoizer.java";
+        String jarFileName = "./src/test/test_resources/commons-lang-LANG_3_7/commons-lang3-3.7.jar";
+        String fileName = "./src/test/test_resources/Memoizer.java";
         LinkedList<MethodInfo> allMethodInfo = getAllMethodInfoFromSource(fileName,false);
         setAllMethodBytecodeNameFromJar(jarFileName,allMethodInfo);
 
@@ -122,8 +122,8 @@ public class UtilsTest {
 
     @Test
     public void testSetAllMethodBytecodeNameFromDir(){
-        String classDir = "./src/test/resources/commons-lang-LANG_3_7/classes";
-        String fileName = "./src/test/resources/Memoizer.java";
+        String classDir = "./src/test/test_resources/commons-lang-LANG_3_7/classes";
+        String fileName = "./src/test/test_resources/Memoizer.java";
         LinkedList<MethodInfo> allMethodInfo = getAllMethodInfoFromSource(fileName,false);
         setAllMethodBytecodeNameFromDir(classDir,allMethodInfo);
 
@@ -141,9 +141,9 @@ public class UtilsTest {
 
     @Test
     public void testGenerateMethodInfoMapByMethodByteName(){
-        String sourceJarFileName = "./src/test/resources/commons-lang-LANG_3_7/commons-lang3-3.7.jar";
+        String sourceJarFileName = "./src/test/test_resources/commons-lang-LANG_3_7/commons-lang3-3.7.jar";
 
-        String fileName = "./src/test/resources/Memoizer.java";
+        String fileName = "./src/test/test_resources/Memoizer.java";
 
         LinkedList<MethodInfo> allMethodInfo = getAllMethodInfoFromSource(fileName,false);
         HashMap<String,MethodInfo> allMethodInfoMap = generateMethodInfoMapByMethodByteName(sourceJarFileName,allMethodInfo);
@@ -157,10 +157,10 @@ public class UtilsTest {
 
     @Test
     public void testSetAllMethodDirectTestFromJar(){
-        String testJarFileName = "./src/test/resources/commons-lang-LANG_3_7/commons-lang3-3.7-tests.jar";
-        String sourceJarFileName = "./src/test/resources/commons-lang-LANG_3_7/commons-lang3-3.7.jar";
+        String testJarFileName = "./src/test/test_resources/commons-lang-LANG_3_7/commons-lang3-3.7-tests.jar";
+        String sourceJarFileName = "./src/test/test_resources/commons-lang-LANG_3_7/commons-lang3-3.7.jar";
 
-        String fileName = "./src/test/resources/Memoizer.java";
+        String fileName = "./src/test/test_resources/Memoizer.java";
         LinkedList<MethodInfo> allMethodInfo = getAllMethodInfoFromSource(fileName,false);
         setAllMethodDirectTestFromJar(sourceJarFileName,testJarFileName,allMethodInfo);
 
@@ -177,10 +177,10 @@ public class UtilsTest {
 
     @Test
     public void testSetAllMethodDirectTestFromFromDir(){
-        String sourceDir = "./src/test/resources/commons-lang-LANG_3_7/classes";
-        String testDir = "./src/test/resources/commons-lang-LANG_3_7/test-classes";
+        String sourceDir = "./src/test/test_resources/commons-lang-LANG_3_7/classes";
+        String testDir = "./src/test/test_resources/commons-lang-LANG_3_7/test-classes";
 
-        String fileName = "./src/test/resources/Memoizer.java";
+        String fileName = "./src/test/test_resources/Memoizer.java";
         LinkedList<MethodInfo> allMethodInfo = getAllMethodInfoFromSource(fileName,false);
         setAllMethodDirectTestFromDir(sourceDir,testDir,allMethodInfo);
 
@@ -200,10 +200,10 @@ public class UtilsTest {
 
     @Test
     public void testSetTestReachDistance() {
-        String sourceDir = "./src/test/resources/testProject/target/classes";
-        String testDir = "./src/test/resources/testProject/target/test-classes";
+        String sourceDir = "./src/test/test_resources/testProject/target/classes";
+        String testDir = "./src/test/test_resources/testProject/target/test-classes";
 
-        String fileName = "./src/test/resources/testProject/src/main/java/org/testproject/A.java";
+        String fileName = "./src/test/test_resources/testProject/src/main/java/org/testproject/A.java";
         LinkedList<MethodInfo> allMethodInfo = getAllMethodInfoFromSource(fileName,true);
 
         HashMap<String,Integer> allMethodTestReachDistance = setAllMethodDirectTestFromDir(sourceDir,testDir,allMethodInfo);
@@ -234,10 +234,10 @@ public class UtilsTest {
 
     @Test
     public void testSetTestReachDistanceLargeClass(){
-        String sourceDir = "./src/test/resources/testProject/target/classes";
-        String testDir = "./src/test/resources/testProject/target/test-classes";
+        String sourceDir = "./src/test/test_resources/testProject/target/classes";
+        String testDir = "./src/test/test_resources/testProject/target/test-classes";
 
-        String fileName = "./src/test/resources/TypeUtils.java";
+        String fileName = "./src/test/test_resources/TypeUtils.java";
         LinkedList<MethodInfo> allMethodInfo = getAllMethodInfoFromSource(fileName,true);
         setAllMethodDirectTestFromDir(sourceDir,testDir,allMethodInfo);
 
@@ -252,7 +252,7 @@ public class UtilsTest {
 
     @Test
     public void testGenerateMethodInfoMapByMethodName(){
-        String fileName = "./src/test/resources/Memoizer.java";
+        String fileName = "./src/test/test_resources/Memoizer.java";
         LinkedList<MethodInfo> allMethodInfo = getAllMethodInfoFromSource(fileName,false);
         HashMap<String,ArrayList<MethodInfo>> allMethodInfoMap = generateMethodInfoMapByMethodName(allMethodInfo);
         ArrayList<MethodInfo> testMethodInfos = allMethodInfoMap.get("org.apache.commons.lang3.concurrent.Memoizer:<init>");

@@ -33,7 +33,7 @@ public class MethodCallVisitorTest {
 
     @Test
     public void testTestCaseInfo(){
-        HashMap<String,TestCaseInfo> testSuite = testWalker("./src/test/resources/testProject/target/test-classes/org/testproject/ATest.class");
+        HashMap<String,TestCaseInfo> testSuite = testWalker("./src/test/test_resources/testProject/target/test-classes/org/testproject/ATest.class");
 
         HashMap<String,Integer> expectedAssert = new HashMap<>();
         expectedAssert.put("org.testproject.ATest:testA()",0);
@@ -62,7 +62,7 @@ public class MethodCallVisitorTest {
 
     @Test
     public void testTestCaseInfo2(){
-        HashMap<String,TestCaseInfo> testSuite = testWalker("./src/test/resources/ConversionTest.class");
+        HashMap<String,TestCaseInfo> testSuite = testWalker("./src/test/test_resources/ConversionTest.class");
         assertTrue(testSuite.get("org.apache.commons.lang3.ConversionTest:testLongToBinary()").methodCalls
                 .contains("org.apache.commons.lang3.ConversionTest:assertBinaryEquals(boolean[],boolean[])"));
 

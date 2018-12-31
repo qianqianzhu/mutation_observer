@@ -22,7 +22,7 @@ public class JhawkMatcherTest {
 
     @Test
     public void testParseJhawkResults(){
-        String jhawkFilename = "./src/test/resources/testJhawk/jfreechart-1.5.0-ChartFactory_all.csv";
+        String jhawkFilename = "./src/test/test_resources/testJhawk/jfreechart-1.5.0-ChartFactory_all.csv";
         HashMap<String, ArrayList<String>> jhawkMethodMap = parseJhawkResults(jhawkFilename);
         int[] expected = {3,13,16,71,74};
         assertEquals(jhawkMethodMap.size(),30);
@@ -36,9 +36,9 @@ public class JhawkMatcherTest {
 
     @Test
     public void testCombineJhawkResults() throws IOException {
-        String jhawkMethodFilename = "./src/test/resources/testJhawk/jfreechart-1.5.0-ChartFactory_method.csv";
-        String jhawkClassFilename = "./src/test/resources/testJhawk/jfreechart-1.5.0-ChartFactory_class.csv";
-        String jhawkResultFilename = "./src/test/resources/testJhawk/jfreechart-1.5.0-ChartFactory_all.csv";
+        String jhawkMethodFilename = "./src/test/test_resources/testJhawk/jfreechart-1.5.0-ChartFactory_method.csv";
+        String jhawkClassFilename = "./src/test/test_resources/testJhawk/jfreechart-1.5.0-ChartFactory_class.csv";
+        String jhawkResultFilename = "./src/test/test_resources/testJhawk/jfreechart-1.5.0-ChartFactory_all.csv";
         combineJhawkResults(jhawkMethodFilename,jhawkClassFilename,jhawkResultFilename);
 
         // read file to check correctness
@@ -55,12 +55,12 @@ public class JhawkMatcherTest {
 
     @Test
     public void testMatchJhawkMethod() throws IOException {
-        String fileName = "./src/test/resources/ChartFactory.java";
+        String fileName = "./src/test/test_resources/ChartFactory.java";
         LinkedList<MethodInfo> allMethodInfo = getAllMethodInfoFromSource(fileName,true);
-        String pitestFileName = "./src/test/resources/testPitest/jfreechart-1.5.0_mutations.csv";
+        String pitestFileName = "./src/test/test_resources/testPitest/jfreechart-1.5.0_mutations.csv";
         parsePitestFile(pitestFileName,allMethodInfo);
-        String jhawkFilename = "./src/test/resources/testJhawk/jfreechart-1.5.0-ChartFactory_all.csv";
-        String matchResultFilename = "./src/test/resources/testJhawk/jfreechart-1.5.0-ChartFactory_test_results.csv";
+        String jhawkFilename = "./src/test/test_resources/testJhawk/jfreechart-1.5.0-ChartFactory_all.csv";
+        String matchResultFilename = "./src/test/test_resources/testJhawk/jfreechart-1.5.0-ChartFactory_test_results.csv";
         matchJhawkMethod(jhawkFilename,matchResultFilename,allMethodInfo);
         // read file to check correctness
         BufferedReader jhawkReader = new BufferedReader(new FileReader(matchResultFilename));
@@ -77,17 +77,17 @@ public class JhawkMatcherTest {
 
     @Test
     public void testMatchJhawkMethodWithRename() throws IOException {
-        String fileName = "./src/test/resources/MinMaxCategoryRenderer.java";
+        String fileName = "./src/test/test_resources/MinMaxCategoryRenderer.java";
         LinkedList<MethodInfo> allMethodInfo = getAllMethodInfoFromSource(fileName,true);
-        String pitestFileName = "./src/test/resources/testPitest/jfreechart-1.5.0_mutations.csv";
+        String pitestFileName = "./src/test/test_resources/testPitest/jfreechart-1.5.0_mutations.csv";
         parsePitestFile(pitestFileName,allMethodInfo);
 
-        String jhawkMethodFilename = "./src/test/resources/testJhawk/jfreechart-1.5.0-MinMaxCategoryRenderer_method.csv";
-        String jhawkClassFilename = "./src/test/resources/testJhawk/jfreechart-1.5.0-MinMaxCategoryRenderer_class.csv";
-        String jhawkResultFilename = "./src/test/resources/testJhawk/jfreechart-1.5.0-MinMaxCategoryRenderer_all.csv";
+        String jhawkMethodFilename = "./src/test/test_resources/testJhawk/jfreechart-1.5.0-MinMaxCategoryRenderer_method.csv";
+        String jhawkClassFilename = "./src/test/test_resources/testJhawk/jfreechart-1.5.0-MinMaxCategoryRenderer_class.csv";
+        String jhawkResultFilename = "./src/test/test_resources/testJhawk/jfreechart-1.5.0-MinMaxCategoryRenderer_all.csv";
         combineJhawkResults(jhawkMethodFilename,jhawkClassFilename,jhawkResultFilename);
 
-        String matchResultFilename = "./src/test/resources/testJhawk/jfreechart-1.5.0-MinMaxCategoryRenderer_test_results.csv";
+        String matchResultFilename = "./src/test/test_resources/testJhawk/jfreechart-1.5.0-MinMaxCategoryRenderer_test_results.csv";
         matchJhawkMethod(jhawkResultFilename,matchResultFilename,allMethodInfo);
         // read file to check correctness
         BufferedReader jhawkReader = new BufferedReader(new FileReader(matchResultFilename));
