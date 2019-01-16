@@ -1,0 +1,6 @@
+A.java,org.testproject.A,org.pitest.mutationtest.engine.gregor.mutators.VoidMethodCallMutator,methodA,6,NO_COVERAGE,none
+A.java,org.testproject.A,org.pitest.mutationtest.engine.gregor.mutators.VoidMethodCallMutator,methodB,10,NO_COVERAGE,none
+A.java,org.testproject.A,org.pitest.mutationtest.engine.gregor.mutators.VoidMethodCallMutator,methodC,14,NO_COVERAGE,none
+A.java,org.testproject.A,org.pitest.mutationtest.engine.gregor.mutators.VoidMethodCallMutator,methodC,15,NO_COVERAGE,none
+A.java,org.testproject.A,org.pitest.mutationtest.engine.gregor.mutators.VoidMethodCallMutator,methodD,19,NO_COVERAGE,none
+A.java,org.testproject.A,org.pitest.mutationtest.engine.gregor.mutators.VoidMethodCallMutator,methodE,23,NO_COVERAGE,none

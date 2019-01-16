@@ -18,19 +18,17 @@
 
   <build>
     <plugins>
-    <plugin>
-      <groupId>org.pitest</groupId>
-      <artifactId>pitest-maven</artifactId>
-      <version>1.1.10</version>
-          <configuration>
-        <targetClasses>
-          <param>org.testproject.*</param>
-        </targetClasses>
-        <targetTests>
-            <param>org.testproject.*</param>
-        </targetTests>
-    </configuration>
-    </plugin>
+         <plugin>
+              <groupId>org.pitest</groupId>
+              <artifactId>pitest-maven</artifactId>
+              <version>1.4.0</version>
+              <configuration>
+                  <skip>false</skip>
+                  <outputFormats>
+                     <outputFormat>CSV</outputFormat>
+                  </outputFormats>
+              </configuration>
+          </plugin>
     </plugins>
   </build>
 </project>
