@@ -1,3 +1,6 @@
+# Code refactoring case study for mutation observer
+This file specify all the details of code refactoring case study
+
 # Rule 1:
 test_distance > 5 && (loop(loop)) <= 0 && is_nested = 0 && is_public = 0 && XMET > 4 && (loop) <= 0 && NOCL <= 9 && non-void_percent <= 0.42
 ## Case 1.1: org.jfree.chart.StandardChartTheme:applyToCategoryAxis
