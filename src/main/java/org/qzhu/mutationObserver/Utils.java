@@ -361,7 +361,9 @@ public class Utils {
             searchPatterns= generateSimpleSearchPatterns();
         }
         // file header
-        writer.write("method_name;is_public;is_static;is_void;is_nested;method_length;kill_mut;total_mut;nested_depth;direct_test_no;test_distance;void_no;getter_no;total_method_no;method_sequence");
+        writer.write("method_name;is_public;is_static;is_void;is_nested;method_length;" +
+                "kill_mut;total_mut;nested_depth;direct_test_no;test_distance;void_no;" +
+                "getter_no;total_method_no;method_sequence");
         for(int pid=0;pid<searchPatterns.size();pid++){
             String treeString = "";
             treeString = searchPatterns.get(pid).toString(treeString);

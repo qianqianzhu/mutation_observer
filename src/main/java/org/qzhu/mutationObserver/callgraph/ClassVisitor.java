@@ -30,10 +30,6 @@ public class ClassVisitor extends EmptyVisitor {
         this.allMethodInfoMapByMethodByteName = allMethodInfoMapByMethodByteName;
     }
 
-    public Digraph<String> getCallGraph(){
-        return callGraph;
-    }
-
     public void visitJavaClass(JavaClass jc) {
         Method[] methods = jc.getMethods();
         for (int i = 0; i < methods.length; i++)

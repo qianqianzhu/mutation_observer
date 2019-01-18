@@ -1,0 +1,6 @@
+|method_name|is_public|is_static|is_void|is_nested|method_length|kill_mut|total_mut|nested_depth|direct_test_no|test_distance|void_no|getter_no|total_method_no|method_sequence|(cond)|(cond(cond))|(cond(loop))|(loop)|(loop(cond))|(loop(loop))|
+|org.testproject.A:methodA|true|false|true|false|3|0|1|0|2|1|5|0|5|(root)|0|0|0|0|0|0|
+|org.testproject.A:methodB|true|false|true|false|3|0|1|0|0|2|5|0|5|(root)|0|0|0|0|0|0|
+|org.testproject.A:methodC|true|false|true|false|4|0|2|0|0|2|5|0|5|(root)|0|0|0|0|0|0|
+|org.testproject.A:methodD|true|false|true|false|3|0|1|0|1|1|5|0|5|(root)|0|0|0|0|0|0|
+|org.testproject.A:methodE|true|false|true|false|3|0|1|0|0|3|5|0|5|(root)|0|0|0|0|0|0|
