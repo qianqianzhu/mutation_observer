@@ -1,12 +1,11 @@
 package org.qzhu.mutationObserver;
 
-import org.qzhu.mutationObserver.source.MethodInfo;
-
 import java.io.IOException;
-import java.io.SyncFailedException;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+
+import org.qzhu.mutationObserver.source.MethodInfo;
 
 /**
  * @author Qianqian Zhu
@@ -46,11 +45,9 @@ class Main {
        } catch (IOException e) {
            System.err.println("No Such File Exception");
            returnValue = -2;
-           return;
        } catch(IndexOutOfBoundsException e){
            System.err.println("Index Out Of Bounds Exception");
            returnValue = -2;
-           return;
        }
 
 
