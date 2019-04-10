@@ -28,8 +28,8 @@ public class UtilsTest {
         List<String> fileNames = new ArrayList<>();
         fileNames = getAllFilesFromDir(fileNames,".java",testDir);
         assertEquals(3,fileNames.size());
-        assertTrue(fileNames.contains("./src/main/resources/ClassPathUtils.java"));
         assertTrue(fileNames.contains("./src/main/resources/helloworld.java"));
+        assertTrue(fileNames.contains("./src/main/resources/ClassPathUtils.java"));
         assertTrue(fileNames.contains("./src/main/resources/TypeUtils.java"));
     }
 
