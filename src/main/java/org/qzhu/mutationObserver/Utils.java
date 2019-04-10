@@ -12,7 +12,6 @@ import org.qzhu.grammar.Java8Parser;
 import org.qzhu.mutationObserver.callgraph.ClassVisitor;
 import org.qzhu.mutationObserver.callgraph.Digraph;
 import org.qzhu.mutationObserver.callgraph.TestCaseInfo;
-import org.qzhu.mutationObserver.source.SourceMethodsIndexer;
 import org.qzhu.mutationObserver.source.*;
 
 import java.io.*;
@@ -21,6 +20,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
+import java.util.Map.Entry;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
@@ -329,13 +329,13 @@ public class Utils {
     public static Map<String,ClassInfo> sumMethodInfoByClassName(LinkedList<MethodInfo> allMethodInfo){
         Map<String,ClassInfo> methodInfoSum = new HashMap<>();
         HashMap<String,ArrayList<MethodInfo>> allMethodInfoMap = generateMethodInfoMapByClassName(allMethodInfo,false);
-        for (String className:allMethodInfoMap.keySet()){
+        for (Entry<String, ArrayList<MethodInfo>> methodEntry : allMethodInfoMap.entrySet()){
             ClassInfo methodTypeSum;
             // initialise method type sum
-            methodTypeSum = new ClassInfo(className);
-            methodTypeSum.totalMethodNo = allMethodInfoMap.get(className).size();
+            methodTypeSum = new ClassInfo(methodEntry.getKey());
+            methodTypeSum.totalMethodNo = methodEntry.getValue().size();
 
-            for (MethodInfo method: allMethodInfoMap.get(className)){
+            for (MethodInfo method: methodEntry.getValue()){
 
                 if(method.isVoid){
                     methodTypeSum.voidMethodNo+=1;
@@ -344,7 +344,7 @@ public class Utils {
                     methodTypeSum.getterMethodNo+=1;
                 }
             }
-            methodInfoSum.put(className,methodTypeSum);
+            methodInfoSum.put(methodEntry.getKey(),methodTypeSum);
         }
 
         return methodInfoSum;
@@ -415,8 +415,8 @@ public class Utils {
         for(MethodInfo method: allMethodInfo){
             String className = method.className;
             String key = className;
-            if(withoutNestedClass && className.indexOf("$")!=-1){
-                key = className.substring(0,className.indexOf("$"));
+            if(withoutNestedClass && className.indexOf('$')!=-1){
+                key = className.substring(0,className.indexOf('$'));
             }
             ArrayList<MethodInfo> methodInfos;
             if(!allMethodInfoMapByClassName.containsKey(key)){
@@ -446,8 +446,7 @@ public class Utils {
         }
 
         // sort methodInfo by method length: ascending
-        for(String methodName:allMethodInfoMapByMethodName.keySet()){
-            ArrayList<MethodInfo> methodInfos = allMethodInfoMapByMethodName.get(methodName);
+        for(ArrayList<MethodInfo> methodInfos : allMethodInfoMapByMethodName.values()){
             Collections.sort(methodInfos, new Comparator<MethodInfo>() {
                 @Override
                 public int compare(MethodInfo lhs, MethodInfo rhs) {
@@ -498,8 +497,8 @@ public class Utils {
                 continue;
             String className = columns[1];
             String classNameWithoutNest=className;
-            if(className.indexOf("$")!=-1) {
-                classNameWithoutNest = className.substring(0, className.indexOf("$"));
+            if(className.indexOf('$')!=-1) {
+                classNameWithoutNest = className.substring(0, className.indexOf('$'));
             }
             int lineNo = Integer.parseInt(columns[4].trim());
             // iterate method map
