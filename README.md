@@ -11,7 +11,7 @@ This will produce a `target` directory with the following two jars:
 - mutationObserver-1.0-SNAPSHOT-jar-with-dependencies.jar: This is an executable jar which includes the mutation mutation observer
 
 ## Run
-The current version of `mutation_observer` can only work with maven project. Before running `mutation_observer`, you need to compile and test the target project (`mvn test`) and obtain the [PiTest](http://pitest.org/quickstart/maven/) mutation result for your project. The PiTest mutation result must in `csv` format. You can achieve that with `outputFormats` in Pitest plugin:
+The current version of `mutation_observer` works on the assumption that the observed project is built using either Maven or Gradle (i.e. it expects the build directory of either build tool). Before running `mutation_observer`, you need to compile and test the target project (`mvn test`) and obtain the [PiTest](http://pitest.org/quickstart/maven/) mutation result for your project. The PiTest mutation result must in `csv` format. You can achieve that with `outputFormats` in Pitest plugin:
 ```xml
 <plugin>
      <groupId>org.pitest</groupId>
