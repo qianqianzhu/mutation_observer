@@ -36,7 +36,7 @@ public class Utils {
                     getAllFilesFromDir(fileNames, suffix ,String.valueOf(path));
                 } else {
                     if(path.toAbsolutePath().toString().endsWith(suffix)) {
-                        fileNames.add(path.toString());
+                        fileNames.add(path.toString().replaceAll("\\\\", "/"));
                     }
                 }
             }

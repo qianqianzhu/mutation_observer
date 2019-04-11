@@ -1,8 +1,10 @@
 package org.qzhu.mutationObserver;
 
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.qzhu.mutationObserver.source.MethodInfo;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.*;
 
@@ -14,15 +16,21 @@ import static org.qzhu.mutationObserver.Utils.*;
  */
 public class UtilsTest {
 
+	@BeforeClass
+	public static void setup() {
+		// Create a results folder if not already exists.
+		new File("./src/main/results/").mkdirs();
+	}
+	
     @Test
     public void testGetAllFilesFromDir() throws IOException {
-
         String testDir ="./src/main/resources/";
         List<String> fileNames = new ArrayList<>();
         fileNames = getAllFilesFromDir(fileNames,".java",testDir);
         assertEquals(3,fileNames.size());
         assertTrue(fileNames.contains("./src/main/resources/helloworld.java"));
         assertTrue(fileNames.contains("./src/main/resources/ClassPathUtils.java"));
+        assertTrue(fileNames.contains("./src/main/resources/TypeUtils.java"));
     }
 
 
